@@ -4,16 +4,18 @@
  * <https://github.com/Level/level-ws/master/LICENSE>
  */
 
-var Writable     = require('readable-stream').Writable
-  , inherits     = require('util').inherits
-  , extend       = require('xtend')
+var Writable = require('stream').Writable || require('readable-stream').Writable
+  , inherits = require('util').inherits
+  , extend   = require('xtend')
 
-  , getOptions   = require('./util').getOptions
-
-  , defaultOptions = { type: 'put' }
+  , defaultOptions = {
+        type          : 'put'
+      , keyEncoding   : 'utf8'
+      , valueEncoding : 'utf8'
+    }
 
     // copied from LevelUP
-  , encodingNames = [
+  , encodingNames  = [
         'hex'
       , 'utf8'
       , 'utf-8'
@@ -48,6 +50,9 @@ function getOptions (levelup, options) {
 }
 
 function WriteStream (options, db) {
+  if (!(this instanceof WriteStream))
+    return new WriteStream(options, db)
+
   Writable.call(this, { objectMode: true })
   this._options = extend(defaultOptions, getOptions(db, options))
   this._db      = db
@@ -134,10 +139,16 @@ WriteStream.prototype.destroy = function () {
   this.writable = false
   this.emit('close')
 }
+
 WriteStream.prototype.destroySoon = function () {
   this.end()
 }
 
-module.exports.create = function (options, db) {
-  return new WriteStream(options, db)
+module.exports = function (db) {
+  db.writeStream = db.createWriteStream = function (options) {
+    return new WriteStream(options, db)
+  }
+  return db
 }
+
+module.exports.WriteStream = WriteStream

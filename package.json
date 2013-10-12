@@ -1,7 +1,7 @@
 {
     "name"            : "level-ws"
   , "description"     : "Fast & simple storage - a Node.js-style LevelDB wrapper"
-  , "version"         : "0.17.0"
+  , "version"         : "0.0.0"
   , "contributors"    : [
         "Rod Vagg <r@va.gg> (https://github.com/rvagg)"
       , "John Chesley <john@chesl.es> (https://github.com/chesles/)"
@@ -27,13 +27,16 @@
       , "stream"
       , "levelup"
     ]
-  , "main"            : "lib/level-ws.js"
+  , "main"            : "level-ws.js"
   , "dependencies"    : {
         "readable-stream" : "~1.0.15"
       , "xtend"           : "~2.1.1"
     }
   , "devDependencies" : {
         "tape"            : "*"
+      , "level"           : "*"
+      , "after"           : "*"
+      , "rimraf"          : "*"
     }
   , "scripts"         : {
         "test"            : "node test.js"
