@@ -5,6 +5,8 @@ level-ws
 
 **A basic WriteStream implementation for [LevelUP](https://github.com/rvagg/node-levelup)**
 
+[![Build Status](https://secure.travis-ci.org/Level/level-ws.png)](http://travis-ci.org/Level/level-ws)
+
 [![NPM](https://nodei.co/npm/level-ws.png?downloads)](https://nodei.co/npm/level-ws/)
 
 **level-ws** provides the most basic general-case WriteStream for LevelUP. It was extracted from the core LevelUP at version 0.18.0 but is bundled with [level](https://github.com/Level/level) and similar packages as it provides a general symmetry to the ReadStream in LevelUP.
