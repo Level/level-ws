@@ -5,7 +5,6 @@
 
 var after  = require('after')
   , tape   = require('tape')
-  , os     = require('os')
   , path   = require('path')
   , fs     = require('fs')
   , level  = require('level')
@@ -13,7 +12,7 @@ var after  = require('after')
   , ws     = require('./')
 
 function cleanup (callback) {
-  fs.readdir(os.tmpdir(), function (err, list) {
+  fs.readdir(__dirname, function (err, list) {
     if (err) return callback(err)
 
     list = list.filter(function (f) {
@@ -35,7 +34,7 @@ function cleanup (callback) {
 }
 
 function openTestDatabase (t, options, callback) {
-  var location = path.join(os.tmpdir(), '_level-ws_test_db.' + Math.random())
+  var location = path.join(__dirname, '_level-ws_test_db.' + Math.random())
   if (typeof options == 'function') {
     callback = options
     options  = { createIfMissing: true, errorIfExists: true }
