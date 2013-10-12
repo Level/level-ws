@@ -1,6 +1,6 @@
 {
     "name"            : "level-ws"
-  , "description"     : "Fast & simple storage - a Node.js-style LevelDB wrapper"
+  , "description"     : "A basic WriteStream implementation for LevelUP"
   , "version"         : "0.0.0"
   , "contributors"    : [
         "Rod Vagg <r@va.gg> (https://github.com/rvagg)"
