@@ -88,27 +88,26 @@ WriteStream.prototype._write = function write (d, enc, next) {
 
   if (!self._batch) {
     self._batch = self._db.batch()
-    process.nextTick(self._flusher)
+
+    if (!self._options.maxBufferLength)
+      process.nextTick(self._flusher)
+  }
+
+  if (type === 'put' || type === 'del') {
+    self._batch[type](d.key, d.value, {
+        keyEncoding   : d.keyEncoding || self._options.keyEncoding
+      , valueEncoding : d.valueEncoding
+          || d.encoding
+          || self._options.valueEncoding
+    })
+    self._length++
   }
 
   if (self._options.maxBufferLength &&
-      self._length > self._options.maxBufferLength) {
-    self._flush()
-    write.call(self, d, enc, next)
-  }
-  else {
-    if (type === 'put' || type === 'del') {
-      self._batch[type](d.key, d.value, {
-          keyEncoding   : d.keyEncoding || self._options.keyEncoding
-        , valueEncoding : d.valueEncoding
-            || d.encoding
-            || self._options.valueEncoding
-      })
-      self._length++
-    }
-
+      self._length === self._options.maxBufferLength)
+    self._flush(next)
+  else
     next()
-  }
 }
 
 WriteStream.prototype._flush = function (f) {
