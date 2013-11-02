@@ -56,24 +56,29 @@ function WriteStream (options, db) {
   Writable.call(this, { objectMode: true })
   this._options = extend(defaultOptions, getOptions(db, options))
   this._db      = db
-  this._buffer = []
+  this._batch
+  this._length  = 0
   this.writable = true
   this.readable = false
 
   var self = this
   this.on('finish', function f () {
-    if (self._buffer && self._buffer.length) {
+    if (self._batch) {
       return self._flush(f)
     }
     self.writable = false
     self.emit('close')
   })
+
+  this._flusher = function flusher() { self._flush() }
 }
 
 inherits(WriteStream, Writable)
 
 WriteStream.prototype._write = function write (d, enc, next) {
   var self = this
+    , type = d.type || self._options.type
+
   if (self._destroyed)
     return
   if (!self._db.isOpen())
@@ -81,42 +86,47 @@ WriteStream.prototype._write = function write (d, enc, next) {
       write.call(self, d, enc, next)
     })
 
+  if (!self._batch)
+    self._batch = self._db.batch()
+
   if (self._options.maxBufferLength &&
-      self._buffer.length > self._options.maxBufferLength) {
+      self._length > self._options.maxBufferLength) {
     self.once('_flush', next)
   }
   else {
-    if (self._buffer.length === 0)
-      process.nextTick(function () { self._flush() })
-    self._buffer.push(d)
+    if (self._length === 0)
+      process.nextTick(self._flusher)
+
+    if (type === 'put' || type === 'del') {
+      self._length++
+      self._batch[type](d.key, d.value, {
+          keyEncoding   : d.keyEncoding || self._options.keyEncoding
+        , valueEncoding : d.valueEncoding
+            || d.encoding
+            || self._options.valueEncoding
+      })
+    }
+
     next()
   }
 }
 
 WriteStream.prototype._flush = function (f) {
-  var self = this
-    , buffer = self._buffer
+  var self   = this
+    , batch  = self._batch
 
-  if (self._destroyed || !buffer) return
+  if (self._destroyed || !batch) return
  
   if (!self._db.isOpen()) {
     return self._db.on('ready', function () { self._flush(f) })
   }
-  self._buffer = []
 
-  self._db.batch(buffer.map(function (d) {
-    return {
-        type          : d.type || self._options.type
-      , key           : d.key
-      , value         : d.value
-      , keyEncoding   : d.keyEncoding || self._options.keyEncoding
-      , valueEncoding : d.valueEncoding
-          || d.encoding
-          || self._options.valueEncoding
-    }
-  }), cb)
+  self._length = 0
+  self._batch = null
 
-  function cb (err) {
+  batch.write(cb)
+
+  function cb(err) {
     if (err) {
       self.writable = false
       self.emit('error', err)
