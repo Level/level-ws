@@ -124,6 +124,10 @@ WriteStream.prototype._flush = function (f) {
   self._batch = null
 
   batch.write(function cb(err) {
+    // keep a reference to the Batch
+    // to avoid it being collected by the GC
+    // otherwise SEGFAULT!
+    batch.done = true
     if (err) {
       self.writable = false
       self.emit('error', err)
