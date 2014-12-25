@@ -3,15 +3,18 @@
  * MIT +no-false-attribs License <https://github.com/rvagg/node-levelup/blob/master/LICENSE>
  */
 
-var after  = require('after')
-  , tape   = require('tape')
-  , path   = require('path')
-  , fs     = require('fs')
-  , level  = require('level')
-  , rimraf = require('rimraf')
-  , ws     = require('./')
+var after       = require('after')
+  , tape        = require('tape')
+  , path        = require('path')
+  , fs          = require('fs')
+  , level       = require('level')
+  , rimraf      = require('rimraf')
+  , delayed     = require('delayed').delayed
+  , WriteStream = require('./')
+
 
 function cleanup (callback) {
+	console.log('CLEANUP')
   fs.readdir(__dirname, function (err, list) {
     if (err) return callback(err)
 
@@ -44,10 +47,8 @@ function openTestDatabase (t, options, callback) {
     t.notOk(err, 'no error')
     level(location, options, function (err, db) {
       t.notOk(err, 'no error')
-      if (!err) {
-        this.db = ws(db) // invoke ws!
-        callback(this.db)
-      }
+      if (!err)
+        callback(db)
     }.bind(this))
   }.bind(this))
 }
@@ -67,7 +68,7 @@ function setUp (t) {
     })
   }
 
-  this.verify = function (ws, db, done, data) {
+  this.verify = delayed(function (ws, db, done, data) {
     if (!data) data = this.sourceData // can pass alternative data array for verification
     t.ok(ws.writable === false, 'not writable')
     t.ok(ws.readable === false, 'not readable')
@@ -82,7 +83,7 @@ function setUp (t) {
         _done()
       })
     })
-  }
+  }, 100, this)
 }
 
 
@@ -103,7 +104,7 @@ function test (label, fn) {
 
 test('test simple WriteStream', function (t, done) {
   this.openTestDatabase(function (db) {
-    var ws = db.createWriteStream()
+    var ws = new WriteStream(db)
     ws.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -117,7 +118,7 @@ test('test simple WriteStream', function (t, done) {
 
 test('test WriteStream with async writes', function (t, done) {
   this.openTestDatabase(function (db) {
-    var ws         = db.createWriteStream()
+    var ws         = new WriteStream(db)
       , sourceData = this.sourceData
       , i          = -1
 
@@ -149,7 +150,7 @@ test('test WriteStream with async writes', function (t, done) {
 
 test('test end accepts data', function (t, done) {
   this.openTestDatabase(function (db) {
-    var ws = db.createWriteStream()
+    var ws = new WriteStream(db)
       , i  = 0
 
     ws.on('error', function (err) {
@@ -170,7 +171,7 @@ test('test end accepts data', function (t, done) {
 // at the moment, destroySoon() is basically just end()
 test('test destroySoon()', function (t, done) {
   this.openTestDatabase(function (db) {
-    var ws = db.createWriteStream()
+    var ws = new WriteStream(db)
     ws.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -197,7 +198,7 @@ test('test destroy()', function (t, done) {
   }
 
   this.openTestDatabase(function (db) {
-    var ws = db.createWriteStream()
+    var ws = new WriteStream(db)
     ws.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -230,7 +231,7 @@ test('test json encoding', function (t, done) {
       ]
 
   this.openTestDatabase(options, function (db) {
-    var ws = db.createWriteStream()
+    var ws = new WriteStream(db)
     ws.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -264,7 +265,7 @@ test('test del capabilities for each key/value', function (t, done) {
   }
 
   function write (db) {
-    var ws = db.createWriteStream()
+    var ws = new WriteStream(db)
     ws.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -279,7 +280,7 @@ test('test del capabilities for each key/value', function (t, done) {
   }
 
   function del (db) {
-    var delStream = db.createWriteStream()
+    var delStream = new WriteStream(db)
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -332,7 +333,7 @@ test('test del capabilities as constructor option', function (t, done) {
   }
 
   function write (db) {
-    var ws = db.createWriteStream()
+    var ws = new WriteStream(db)
     ws.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -347,7 +348,7 @@ test('test del capabilities as constructor option', function (t, done) {
   }
 
   function del (db) {
-    var delStream = db.createWriteStream({ type: 'del' })
+    var delStream = new WriteStream(db, { type: 'del' })
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -401,7 +402,7 @@ test('test type at key/value level must take precedence on the constructor', fun
   }
 
   function write (db) {
-    var ws = db.createWriteStream()
+    var ws = new WriteStream(db)
     ws.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -416,7 +417,7 @@ test('test type at key/value level must take precedence on the constructor', fun
   }
 
   function del (db) {
-    var delStream = db.createWriteStream({ type: 'del' })
+    var delStream = new WriteStream(db, { type: 'del' })
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -457,7 +458,7 @@ test('test ignoring pairs with the wrong type', function (t, done) {
   }
 
   function write (db) {
-    var ws = db.createWriteStream()
+    var ws = new WriteStream(db)
     ws.on('error', function (err) {
       t.notOk(err, 'no error')
     })
