@@ -13,10 +13,6 @@ level-ws
 
 **level-ws** is not a high-performance WriteStream, if your benchmarking shows that your particular usage pattern and data types do not perform well with this WriteStream then you should try one of the alternative WriteStreams available for LevelUP that are optimised for different use-cases.
 
-## Alternative WriteStream packages
-
-***TODO***
-
 ## Usage
 
 To use **level-ws** you simply need to wrap a LevelUP instance and you get a `createWriteStream()` method on it.

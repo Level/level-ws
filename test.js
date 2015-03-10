@@ -14,7 +14,6 @@ var after       = require('after')
 
 
 function cleanup (callback) {
-	console.log('CLEANUP')
   fs.readdir(__dirname, function (err, list) {
     if (err) return callback(err)
 
