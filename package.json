@@ -35,12 +35,13 @@
   "devDependencies": {
     "after": "~0.8.1",
     "delayed": "~1.0.1",
+    "faucet": "0.0.1",
     "level": "~0.18.0",
     "rimraf": "~2.2.8",
     "tape": "~3.0.3"
   },
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js | faucet"
   },
   "license": "MIT"
 }
