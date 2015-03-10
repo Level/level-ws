@@ -13,10 +13,6 @@ level-ws
 
 **level-ws** is not a high-performance WriteStream, if your benchmarking shows that your particular usage pattern and data types do not perform well with this WriteStream then you should try one of the alternative WriteStreams available for LevelUP that are optimised for different use-cases.
 
-## Alternative WriteStream packages
-
-***TODO***
-
 ## Usage
 
 To use **level-ws** you simply need to wrap a LevelUP instance and you get a `createWriteStream()` method on it.
@@ -140,4 +136,4 @@ Licence &amp; copyright
 
 Copyright (c) 2012-2015 **level-ws** contributors (listed above).
 
-**level-ws** is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
+**level-ws** is licensed under the MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE.md file for more details.
