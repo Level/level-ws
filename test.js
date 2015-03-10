@@ -1,6 +1,7 @@
-/* Copyright (c) 2012-2013 LevelUP contributors
- * See list at <https://github.com/rvagg/node-levelup#contributing>
- * MIT +no-false-attribs License <https://github.com/rvagg/node-levelup/blob/master/LICENSE>
+/* Copyright (c) 2012-2015 level-ws contributors
+ * See list at <https://github.com/Level/level-ws#contributors>
+ * MIT License
+ * <https://github.com/Level/level-ws/blob/master/LICENSE.md>
  */
 
 var after       = require('after')
