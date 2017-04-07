@@ -1,7 +1,7 @@
 {
   "name": "level-ws",
   "description": "A basic WriteStream implementation for LevelUP",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "contributors": [
     "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
     "John Chesley <john@chesl.es> (https://github.com/chesles/)",
@@ -29,8 +29,8 @@
   ],
   "main": "level-ws.js",
   "dependencies": {
-    "readable-stream": "~2.2.8",
-    "xtend": "~2.1.1"
+    "readable-stream": "^2.2.8",
+    "xtend": "^4.0.0"
   },
   "devDependencies": {
     "tape": "*",
