@@ -138,6 +138,6 @@ ws.end()
 Licence &amp; copyright
 -------------------
 
-Copyright (c) 2012-2015 **level-ws** contributors (listed above).
+Copyright (c) 2012-2017 **level-ws** contributors (listed above).
 
 **level-ws** is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
