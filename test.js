@@ -22,13 +22,9 @@ function cleanup (callback) {
     if (!list.length)
       return callback()
 
-    var ret = 0
-
+    var done = after(list.length, callback)
     list.forEach(function (f) {
-      rimraf(path.join(__dirname, f), function () {
-        if (++ret == list.length)
-          callback()
-      })
+      rimraf(path.join(__dirname, f), done)
     })
   })
 }
