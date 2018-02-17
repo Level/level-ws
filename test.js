@@ -55,44 +55,35 @@ function openTestDatabase (t, options, callback) {
   }.bind(this))
 }
 
-function setUp (t) {
-  this.openTestDatabase = openTestDatabase.bind(this, t)
-
-  this.timeout = 1000
-
-  this.sourceData = []
-
-  for (var i = 0; i < 10; i++) {
-    this.sourceData.push({
-        type  : 'put'
-      , key   : i
-      , value : Math.random()
-    })
-  }
-
-  this.verify = function (ws, db, done, data) {
-    if (!data) data = this.sourceData // can pass alternative data array for verification
-    t.ok(ws.writable === false, 'not writable')
-    t.ok(ws.readable === false, 'not readable')
-    var _done = after(data.length, done)
-    data.forEach(function (data) {
-      db.get(data.key, function (err, value) {
-        t.notOk(err, 'no error')
-        if (typeof value == 'object')
-          t.deepEqual(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
-        else
-          t.equal(+value, +data.value, 'WriteStream data #' + data.key + ' has correct value')
-        _done()
-      })
-    })
-  }
-}
-
-
 function test (label, fn) {
   tape(label, function (t) {
     var ctx = {}
-    setUp.call(ctx, t)
+
+    ctx.openTestDatabase = openTestDatabase.bind(ctx, t)
+
+    var sourceData = ctx.sourceData = []
+    for (var i = 0; i < 10; i++) {
+      ctx.sourceData.push({ type: 'put', key: i, value: Math.random() })
+    }
+
+    ctx.verify = function (ws, db, done, data) {
+      // can pass alternative data array for verification
+      data = data || sourceData
+      t.ok(ws.writable === false, 'not writable')
+      t.ok(ws.readable === false, 'not readable')
+      var _done = after(data.length, done)
+      data.forEach(function (data) {
+        db.get(data.key, function (err, value) {
+          t.notOk(err, 'no error')
+          if (typeof value == 'object')
+            t.deepEqual(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
+          else
+            t.equal(+value, +data.value, 'WriteStream data #' + data.key + ' has correct value')
+          _done()
+        })
+      })
+    }
+
     fn.call(ctx, t, function () {
       var _cleanup = cleanup.bind(ctx, t.end.bind(t))
       if (ctx.db)
