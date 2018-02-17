@@ -239,7 +239,7 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
       t.notOk(err, 'no error')
     })
     delStream.on('close', function () {
-      verify();
+      verify()
     })
     data.forEach(function (d) {
       d.type = 'del'
@@ -266,7 +266,7 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
     t.notOk(err, 'no error')
   })
   ws.on('close', function () {
-    del();
+    del()
   })
   data.forEach(function (d) {
     ws.write(d)
@@ -293,7 +293,7 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
       t.notOk(err, 'no error')
     })
     delStream.on('close', function () {
-      verify();
+      verify()
     })
     data.forEach(function (d) {
       delStream.write(d)
@@ -319,7 +319,7 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
     t.notOk(err, 'no error')
   })
   ws.on('close', function () {
-    del();
+    del()
   })
   data.forEach(function (d) {
     ws.write(d)
@@ -349,7 +349,7 @@ test('test type at key/value level must take precedence on the constructor', { k
       t.notOk(err, 'no error')
     })
     delStream.on('close', function () {
-      verify();
+      verify()
     })
     data.forEach(function (d) {
       delStream.write(d)
@@ -379,7 +379,7 @@ test('test type at key/value level must take precedence on the constructor', { k
     t.notOk(err, 'no error')
   })
   ws.on('close', function () {
-    del();
+    del()
   })
   data.forEach(function (d) {
     ws.write(d)
