@@ -83,7 +83,13 @@ function test (label, options, fn) {
       t.notOk(err, 'no error')
       ctx.db = ws(db)
       fn(t, ctx, function () {
-        ctx.db.close(cleanup.bind(null, t.end.bind(t)))
+        ctx.db.close(function (err) {
+          t.notOk(err, 'no error')
+          cleanup(function (err) {
+            t.notOk(err, 'no error')
+            t.end()
+          })
+        })
       })
     })
   })
