@@ -37,8 +37,11 @@ function openTestDatabase (t, options, callback) {
   var location = path.join(__dirname, '_level-ws_test_db.' + Math.random())
   if (typeof options == 'function') {
     callback = options
-    options  = { createIfMissing: true, errorIfExists: true }
+    options  = {}
   }
+
+  options.createIfMissing = true
+  options.errorIfExists = true
 
   rimraf(location, function (err) {
     t.notOk(err, 'no error')
@@ -216,7 +219,7 @@ test('test destroy()', function (t, done) {
 })
 
 test('test json encoding', function (t, done) {
-  var options = { createIfMissing: true, errorIfExists: true, keyEncoding: 'utf8', valueEncoding: 'json' }
+  var options = { keyEncoding: 'utf8', valueEncoding: 'json' }
     , data = [
           { type: 'put', key: 'aa', value: { a: 'complex', obj: 100 } }
         , { type: 'put', key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } }
@@ -243,7 +246,7 @@ test('test json encoding', function (t, done) {
 })
 
 test('test del capabilities for each key/value', function (t, done) {
-  var options = { createIfMissing: true, errorIfExists: true, keyEncoding: 'utf8', valueEncoding: 'json' }
+  var options = { keyEncoding: 'utf8', valueEncoding: 'json' }
     , data = [
           { type: 'put', key: 'aa', value: { a: 'complex', obj: 100 } }
         , { type: 'put', key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } }
@@ -311,7 +314,7 @@ test('test del capabilities for each key/value', function (t, done) {
 
 test('test del capabilities as constructor option', function (t, done) {
 
-  var options = { createIfMissing: true, errorIfExists: true, keyEncoding: 'utf8', valueEncoding: 'json' }
+  var options = { keyEncoding: 'utf8', valueEncoding: 'json' }
     , data = [
           { key: 'aa', value: { a: 'complex', obj: 100 } }
         , { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } }
@@ -377,7 +380,7 @@ test('test del capabilities as constructor option', function (t, done) {
 })
 
 test('test type at key/value level must take precedence on the constructor', function (t, done) {
-  var options = { createIfMissing: true, errorIfExists: true, keyEncoding: 'utf8', valueEncoding: 'json' }
+  var options = { keyEncoding: 'utf8', valueEncoding: 'json' }
     , data = [
           { key: 'aa', value: { a: 'complex', obj: 100 } }
         , { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } }
