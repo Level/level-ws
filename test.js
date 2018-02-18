@@ -3,13 +3,13 @@
  * MIT +no-false-attribs License <https://github.com/rvagg/node-levelup/blob/master/LICENSE>
  */
 
-var after  = require('after')
-  , tape   = require('tape')
-  , path   = require('path')
-  , fs     = require('fs')
-  , level  = require('level')
-  , rimraf = require('rimraf')
-  , ws     = require('./')
+var after = require('after')
+var tape = require('tape')
+var path = require('path')
+var fs = require('fs')
+var level = require('level')
+var rimraf = require('rimraf')
+var ws = require('./')
 
 function cleanup (callback) {
   fs.readdir(__dirname, function (err, list) {
@@ -98,10 +98,15 @@ test('test simple WriteStream', function (t, ctx, done) {
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  ws.on('close', ctx.verify.bind(ctx, ws, done))
+
+  var next = after(2, ctx.verify.bind(ctx, ws, done))
+  ctx.db.once('batch', next.bind(null, null))
+  ws.on('close', next)
+
   ctx.sourceData.forEach(function (d) {
     ws.write(d)
   })
+
   ws.end()
 })
 
@@ -113,14 +118,12 @@ test('test WriteStream with async writes', function (t, ctx, done) {
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  ws.on('close', ctx.verify.bind(ctx, ws, done))
 
   function write () {
     if (++i >= sourceData.length)
       return ws.end()
 
     var d = sourceData[i]
-    // some should batch() and some should put()
     if (d.key % 3) {
       setTimeout(function () {
         ws.write(d)
@@ -132,6 +135,11 @@ test('test WriteStream with async writes', function (t, ctx, done) {
     }
   }
 
+  // Each ws.write()/process.nextTick() pair above cause a batch
+  var next = after(sourceData.length + 1, ctx.verify.bind(ctx, ws, done))
+  ctx.db.on('batch', next.bind(null, null))
+  ws.on('close', next)
+
   write()
 })
 
@@ -142,7 +150,11 @@ test('test end accepts data', function (t, ctx, done) {
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  ws.on('close', ctx.verify.bind(ctx, ws, done))
+
+  var next = after(2, ctx.verify.bind(ctx, ws, done))
+  ctx.db.once('batch', next.bind(null, null))
+  ws.on('close', next)
+
   ctx.sourceData.forEach(function (d) {
     i++
     if (i < ctx.sourceData.length) {
@@ -159,10 +171,15 @@ test('test destroySoon()', function (t, ctx, done) {
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  ws.on('close', ctx.verify.bind(ctx, ws, done))
+
+  var next = after(2, ctx.verify.bind(ctx, ws, done))
+  ctx.db.once('batch', next.bind(null, null))
+  ws.on('close', next)
+
   ctx.sourceData.forEach(function (d) {
     ws.write(d)
   })
+
   ws.destroySoon()
 })
 
@@ -185,16 +202,21 @@ test('test destroy()', function (t, ctx, done) {
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
+
   t.ok(ws.writable === true, 'is writable')
   t.ok(ws.readable === false, 'not readable')
+
   ws.on('close', verify.bind(null))
+
   ctx.sourceData.forEach(function (d) {
     ws.write(d)
     t.ok(ws.writable === true, 'is writable')
     t.ok(ws.readable === false, 'not readable')
   })
+
   t.ok(ws.writable === true, 'is writable')
   t.ok(ws.readable === false, 'not readable')
+
   ws.destroy()
 })
 
@@ -212,13 +234,19 @@ test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, funct
   ]
 
   var ws = ctx.db.createWriteStream()
+
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  ws.on('close', ctx.verify.bind(ctx, ws, done, data))
+
+  var next = after(2, ctx.verify.bind(ctx, ws, done, data))
+  ctx.db.once('batch', next.bind(null, null))
+  ws.on('close', next)
+
   data.forEach(function (d) {
     ws.write(d)
   })
+
   ws.end()
 })
 
@@ -240,9 +268,11 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
-    delStream.on('close', function () {
-      verify()
-    })
+
+    var next = after(2, verify)
+    ctx.db.once('batch', next.bind(null, null))
+    delStream.on('close', next)
+
     data.forEach(function (d) {
       d.type = 'del'
       delStream.write(d)
@@ -267,12 +297,15 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  ws.on('close', function () {
-    del()
-  })
+
+  var next = after(2, del)
+  ctx.db.once('batch', next.bind(null, null))
+  ws.on('close', next)
+
   data.forEach(function (d) {
     ws.write(d)
   })
+
   ws.end()
 })
 
@@ -294,9 +327,11 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
-    delStream.on('close', function () {
-      verify()
-    })
+
+    var next = after(2, verify)
+    ctx.db.once('batch', next.bind(null, null))
+    delStream.on('close', next)
+
     data.forEach(function (d) {
       delStream.write(d)
     })
@@ -320,12 +355,15 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  ws.on('close', function () {
-    del()
-  })
+
+  var next = after(2, del)
+  ctx.db.once('batch', next.bind(null, null))
+  ws.on('close', next)
+
   data.forEach(function (d) {
     ws.write(d)
   })
+
   ws.end()
 })
 
@@ -350,9 +388,11 @@ test('test type at key/value level must take precedence on the constructor', { k
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
-    delStream.on('close', function () {
-      verify()
-    })
+
+    var next = after(2, verify)
+    ctx.db.once('batch', next.bind(null, null))
+    delStream.on('close', next)
+
     data.forEach(function (d) {
       delStream.write(d)
     })
@@ -380,12 +420,15 @@ test('test type at key/value level must take precedence on the constructor', { k
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  ws.on('close', function () {
-    del()
-  })
+
+  var next = after(2, del)
+  ctx.db.once('batch', next.bind(null, null))
+  ws.on('close', next)
+
   data.forEach(function (d) {
     ws.write(d)
   })
+
   ws.end()
 })
 
@@ -409,9 +452,7 @@ test('test that missing type errors', function (t, ctx, done) {
     t.equal(err.message, '`type` must be \'put\' or \'del\'', 'should error')
     errored = true
   })
-  ws.on('close', function () {
-    verify()
-  })
+  ws.on('close', verify)
   ws.write(data)
   ws.end()
 })
