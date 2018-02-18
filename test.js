@@ -19,9 +19,6 @@ function cleanup (callback) {
       return (/^_level-ws_test_db\./).test(f)
     })
 
-    if (!list.length)
-      return callback()
-
     var done = after(list.length, callback)
     list.forEach(function (f) {
       rimraf(path.join(__dirname, f), done)
