@@ -1,41 +1,42 @@
-/* Copyright (c) 2013 LevelUP contributors
- * See list at <https://github.com/rvagg/node-levelup#contributing>
+/**
+ * Copyright (c) 2013-2018 level contributors
+ * See list at <https://github.com/level/community#contributing>
  * MIT +no-false-attribs License
  * <https://github.com/Level/level-ws/master/LICENSE>
  */
 
-var Writable = require('stream').Writable || require('readable-stream').Writable
-  , inherits = require('util').inherits
-  , extend   = require('xtend')
+var Writable = require('readable-stream').Writable
+var inherits = require('util').inherits
+var extend = require('xtend')
 
-  , defaultOptions = {
-        type          : 'put'
-      , keyEncoding   : 'utf8'
-      , valueEncoding : 'utf8'
-    }
+var defaultOptions = {
+  type: 'put',
+  keyEncoding: 'utf8',
+  valueEncoding: 'utf8'
+}
 
-    // copied from LevelUP
-  , encodingNames  = [
-        'hex'
-      , 'utf8'
-      , 'utf-8'
-      , 'ascii'
-      , 'binary'
-      , 'base64'
-      , 'ucs2'
-      , 'ucs-2'
-      , 'utf16le'
-      , 'utf-16le'
-    ]
+// copied from LevelUP
+var encodingNames  = [
+  'hex',
+  'utf8',
+  'utf-8',
+  'ascii',
+  'binary',
+  'base64',
+  'ucs2',
+  'ucs-2',
+  'utf16le',
+  'utf-16le'
+]
 
-    // copied from LevelUP
-  , encodingOpts = (function () {
-      var eo = {}
-      encodingNames.forEach(function (e) {
-        eo[e] = { valueEncoding : e }
-      })
-      return eo
-    }())
+// copied from LevelUP
+var encodingOpts = (function () {
+  var eo = {}
+  encodingNames.forEach(function (e) {
+    eo[e] = { valueEncoding : e }
+  })
+  return eo
+}())
 
 // copied from LevelUP
 function getOptions (levelup, options) {
