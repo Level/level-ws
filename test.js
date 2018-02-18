@@ -30,10 +30,7 @@ function openTestDatabase (options, callback) {
   var location = path.join(__dirname, '_level-ws_test_db.' + Math.random())
   rimraf(location, function (err) {
     if (err) return callback(err)
-    level(location, options, function (err, db) {
-      if (err) return callback(err)
-      callback(null, db)
-    })
+    level(location, options, callback)
   })
 }
 
