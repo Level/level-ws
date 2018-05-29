@@ -134,10 +134,8 @@ ws.end()
 <tr><th align="left">James Halliday</th><td><a href="https://github.com/substack">GitHub/substack</a></td><td><a href="https://twitter.com/substack">Twitter/@substack</a></td></tr>
 </tbody></table>
 
-<a name="licence"></a>
-Licence &amp; copyright
--------------------
+## License
 
-Copyright (c) 2012-2017 **level-ws** contributors (listed above).
+Copyright (c) 2012-2018 `level-ws` contributors (listed above).
 
-**level-ws** is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
+`level-ws` is licensed under the MIT license. All rights not explicitly granted in the MIT license are reserved. See the included `LICENSE.md` file for more details.
