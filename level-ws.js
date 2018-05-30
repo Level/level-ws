@@ -6,7 +6,7 @@
  */
 
 var Writable = require('readable-stream').Writable
-var inherits = require('util').inherits
+var inherits = require('inherits')
 var extend = require('xtend')
 
 var defaultOptions = {
