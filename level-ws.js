@@ -1,10 +1,3 @@
-/**
- * Copyright (c) 2013-2018 level contributors
- * See list at <https://github.com/level/community#contributing>
- * MIT +no-false-attribs License
- * <https://github.com/Level/level-ws/master/LICENSE>
- */
-
 var Writable = require('readable-stream').Writable
 var inherits = require('inherits')
 var extend = require('xtend')
