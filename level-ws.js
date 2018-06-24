@@ -93,8 +93,8 @@ WriteStream.prototype._write = function write (d, enc, next) {
 }
 
 WriteStream.prototype._flush = function (f) {
-  var self = this,
-    buffer = self._buffer
+  var self = this
+  var buffer = self._buffer
 
   if (self._destroyed || !buffer) return
 

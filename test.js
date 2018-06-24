@@ -1,10 +1,10 @@
-var after = require('after'),
-  tape = require('tape'),
-  path = require('path'),
-  fs = require('fs'),
-  level = require('level'),
-  rimraf = require('rimraf'),
-  ws = require('./')
+var after = require('after')
+var tape = require('tape')
+var path = require('path')
+var fs = require('fs')
+var level = require('level')
+var rimraf = require('rimraf')
+var ws = require('./')
 
 function cleanup (callback) {
   fs.readdir(__dirname, function (err, list) {
@@ -320,17 +320,17 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
 
 test('test type at key/value level must take precedence on the constructor', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
-      { key: 'aa', value: { a: 'complex', obj: 100 } },
-      { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-      { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-      { key: 'ba', value: { a: 'complex', obj: 100 } },
-      { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-      { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-      { key: 'ca', value: { a: 'complex', obj: 100 } },
-      { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-      { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
-    ],
-    exception = data[0]
+    { key: 'aa', value: { a: 'complex', obj: 100 } },
+    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ba', value: { a: 'complex', obj: 100 } },
+    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ca', value: { a: 'complex', obj: 100 } },
+    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+  ]
+  var exception = data[0]
 
   exception['type'] = 'put'
 
