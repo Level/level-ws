@@ -1,10 +1,10 @@
-var after  = require('after')
-  , tape   = require('tape')
-  , path   = require('path')
-  , fs     = require('fs')
-  , level  = require('level')
-  , rimraf = require('rimraf')
-  , ws     = require('./')
+var after = require('after'),
+  tape = require('tape'),
+  path = require('path'),
+  fs = require('fs'),
+  level = require('level'),
+  rimraf = require('rimraf'),
+  ws = require('./')
 
 function cleanup (callback) {
   fs.readdir(__dirname, function (err, list) {
@@ -30,9 +30,9 @@ function openTestDatabase (options, callback) {
 }
 
 function test (label, options, fn) {
-  if (typeof options == 'function') {
+  if (typeof options === 'function') {
     fn = options
-    options  = {}
+    options = {}
   }
 
   options.createIfMissing = true
@@ -55,10 +55,11 @@ function test (label, options, fn) {
       data.forEach(function (data) {
         ctx.db.get(data.key, function (err, value) {
           t.notOk(err, 'no error')
-          if (typeof value == 'object')
+          if (typeof value === 'object') {
             t.deepEqual(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
-          else
+          } else {
             t.equal(+value, +data.value, 'WriteStream data #' + data.key + ' has correct value')
+          }
           _done()
         })
       })
@@ -80,7 +81,7 @@ function test (label, options, fn) {
   })
 }
 
-//TODO: test various encodings
+// TODO: test various encodings
 
 test('test simple WriteStream', function (t, ctx, done) {
   var ws = ctx.db.createWriteStream()
@@ -105,8 +106,7 @@ test('test WriteStream with async writes', function (t, ctx, done) {
   ws.on('close', ctx.verify.bind(ctx, ws, done))
 
   function write () {
-    if (++i >= sourceData.length)
-      return ws.end()
+    if (++i >= sourceData.length) return ws.end()
 
     var d = sourceData[i]
     // some should batch() and some should put()
@@ -126,7 +126,7 @@ test('test WriteStream with async writes', function (t, ctx, done) {
 
 test('test end accepts data', function (t, ctx, done) {
   var ws = ctx.db.createWriteStream()
-  var i  = 0
+  var i = 0
 
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
@@ -320,17 +320,17 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
 
 test('test type at key/value level must take precedence on the constructor', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
-    { key: 'aa', value: { a: 'complex', obj: 100 } },
-    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { key: 'ba', value: { a: 'complex', obj: 100 } },
-    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { key: 'ca', value: { a: 'complex', obj: 100 } },
-    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
-  ]
-  , exception = data[0]
+      { key: 'aa', value: { a: 'complex', obj: 100 } },
+      { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+      { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+      { key: 'ba', value: { a: 'complex', obj: 100 } },
+      { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+      { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+      { key: 'ca', value: { a: 'complex', obj: 100 } },
+      { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+      { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+    ],
+    exception = data[0]
 
   exception['type'] = 'put'
 
