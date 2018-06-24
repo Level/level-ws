@@ -379,7 +379,6 @@ test('test type at key/value level must take precedence on the constructor', { k
 })
 
 test('test that missing type errors', function (t, ctx, done) {
-  var self = this
   var data = { key: 314, type: 'foo' }
   var errored = false
 
