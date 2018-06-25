@@ -83,12 +83,27 @@ WriteStream.prototype._write = function write (d, enc, next) {
     })
   }
 
-  // TODO re-implement buffering logic using this._options.maxBufferLength
-  self._buffer.push(d)
-  next()
+  function push (d) {
+    self._buffer.push(d)
+    next()
+  }
+
+  if (self._options.maxBufferLength &&
+      self._options.maxBufferLength === self._buffer.length) {
+    self._batch(function (err) {
+      if (err) return next(err)
+      push(d)
+    })
+  } else {
+    push(d)
+  }
 }
 
 WriteStream.prototype._final = function (cb) {
+  this._batch(cb)
+}
+
+WriteStream.prototype._batch = function (cb) {
   var self = this
   var buffer = self._buffer
 
