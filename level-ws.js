@@ -1,13 +1,16 @@
 var Writable = require('readable-stream').Writable
 var inherits = require('inherits')
+// TODO remove
 var extend = require('xtend')
 
 var defaultOptions = {
   type: 'put',
+  // TODO remove encodings, no longer part of levelup
   keyEncoding: 'utf8',
   valueEncoding: 'utf8'
 }
 
+// TODO remove, no longer part of levelup
 // copied from LevelUP
 var encodingNames = [
   'hex',
@@ -22,6 +25,7 @@ var encodingNames = [
   'utf-16le'
 ]
 
+// TODO remove
 // copied from LevelUP
 var encodingOpts = (function () {
   var eo = {}
@@ -31,6 +35,7 @@ var encodingOpts = (function () {
   return eo
 }())
 
+// TODO remove
 // copied from LevelUP
 function getOptions (levelup, options) {
   var s = typeof options === 'string' // just an encoding
@@ -44,6 +49,7 @@ function getOptions (levelup, options) {
   )
 }
 
+// TODO flip parameters
 function WriteStream (options, db) {
   if (!(this instanceof WriteStream)) {
     return new WriteStream(options, db)
@@ -51,19 +57,14 @@ function WriteStream (options, db) {
 
   Writable.call(this, { objectMode: true })
 
+  // TODO use Object.assign()
   this._options = extend(defaultOptions, getOptions(db, options))
   this._db = db
   this._buffer = []
-  this.writable = true
-  this.readable = false
 
   var self = this
 
-  this.on('finish', function f () {
-    if (self._buffer && self._buffer.length) {
-      return self._flush(f)
-    }
-    self.writable = false
+  this.on('finish', function () {
     self.emit('close')
   })
 }
@@ -72,68 +73,71 @@ inherits(WriteStream, Writable)
 
 WriteStream.prototype._write = function write (d, enc, next) {
   var self = this
+  // TODO use self.destroyed
   if (self._destroyed) return
 
+  // TODO remove, no longer needed
   if (!self._db.isOpen()) {
     return self._db.once('ready', function () {
       write.call(self, d, enc, next)
     })
   }
 
-  if (self._options.maxBufferLength &&
-      self._buffer.length > self._options.maxBufferLength) {
-    self.once('_flush', next)
-  } else {
-    if (self._buffer.length === 0) {
-      process.nextTick(function () { self._flush() })
-    }
-    self._buffer.push(d)
-    next()
-  }
-}
-
-WriteStream.prototype._flush = function (f) {
-  var self = this
-  var buffer = self._buffer
-
-  if (self._destroyed || !buffer) return
-
-  if (!self._db.isOpen()) {
-    return self._db.on('ready', function () { self._flush(f) })
-  }
-  self._buffer = []
-
-  self._db.batch(buffer.map(function (d) {
-    return {
+  function push (d) {
+    self._buffer.push({
       type: d.type || self._options.type,
       key: d.key,
       value: d.value,
+      // TODO remove encodings
       keyEncoding: d.keyEncoding || self._options.keyEncoding,
       valueEncoding: (d.valueEncoding || d.encoding ||
                       self._options.valueEncoding)
-    }
-  }), cb)
-
-  function cb (err) {
-    if (err) {
-      self.writable = false
-      self.emit('error', err)
-    } else {
-      if (f) f()
-      self.emit('_flush')
-    }
+    })
+    next()
   }
+
+  if (self._options.maxBufferLength &&
+      self._options.maxBufferLength === self._buffer.length) {
+    self._batch(function (err) {
+      if (err) return next(err)
+      push(d)
+    })
+  } else {
+    push(d)
+  }
+}
+
+WriteStream.prototype._final = function (cb) {
+  this._batch(cb)
+}
+
+WriteStream.prototype._batch = function (cb) {
+  var self = this
+  var buffer = self._buffer
+
+  // TODO use self.destroyed
+  // TODO remove !buffer check
+  if (self._destroyed || !buffer) return cb()
+
+  // TODO remove, no longer needed
+  if (!self._db.isOpen()) {
+    return self._db.once('ready', function () { self._final(cb) })
+  }
+
+  self._buffer = []
+  self._db.batch(buffer, cb)
 }
 
 WriteStream.prototype.toString = function () {
   return 'LevelUP.WriteStream'
 }
 
+// TODO remove, should be enough to use default, alternatively
+// implement WriteStream.prototype._destroy
 WriteStream.prototype.destroy = function () {
   if (this._destroyed) return
   this._buffer = null
   this._destroyed = true
-  this.writable = false
   this.emit('close')
 }
 
@@ -141,6 +145,7 @@ WriteStream.prototype.destroySoon = function () {
   this.end()
 }
 
+// TODO remove, only export constructor
 module.exports = function (db) {
   db.writeStream = db.createWriteStream = function (options) {
     return new WriteStream(options, db)

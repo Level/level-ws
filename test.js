@@ -43,23 +43,21 @@ function test (label, options, fn) {
 
     var sourceData = ctx.sourceData = []
     for (var i = 0; i < 10; i++) {
-      ctx.sourceData.push({ type: 'put', key: i, value: Math.random() })
+      ctx.sourceData.push({
+        type: 'put',
+        key: String(i),
+        value: String(i)
+      })
     }
 
     ctx.verify = function (ws, done, data) {
       // can pass alternative data array for verification
       data = data || sourceData
-      t.ok(ws.writable === false, 'not writable')
-      t.ok(ws.readable === false, 'not readable')
       var _done = after(data.length, done)
       data.forEach(function (data) {
         ctx.db.get(data.key, function (err, value) {
-          t.notOk(err, 'no error')
-          if (typeof value === 'object') {
-            t.deepEqual(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
-          } else {
-            t.equal(+value, +data.value, 'WriteStream data #' + data.key + ' has correct value')
-          }
+          t.error(err, 'no error')
+          t.same(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
           _done()
         })
       })
@@ -159,7 +157,6 @@ test('test destroy()', function (t, ctx, done) {
   var ws = ctx.db.createWriteStream()
 
   var verify = function () {
-    t.ok(ws.writable === false, 'not writable')
     var _done = after(ctx.sourceData.length, done)
     ctx.sourceData.forEach(function (data) {
       ctx.db.get(data.key, function (err, value) {
@@ -174,16 +171,10 @@ test('test destroy()', function (t, ctx, done) {
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  t.ok(ws.writable === true, 'is writable')
-  t.ok(ws.readable === false, 'not readable')
   ws.on('close', verify.bind(null))
   ctx.sourceData.forEach(function (d) {
     ws.write(d)
-    t.ok(ws.writable === true, 'is writable')
-    t.ok(ws.readable === false, 'not readable')
   })
-  t.ok(ws.writable === true, 'is writable')
-  t.ok(ws.readable === false, 'not readable')
   ws.destroy()
 })
 
@@ -401,5 +392,26 @@ test('test that missing type errors', function (t, ctx, done) {
     verify()
   })
   ws.write(data)
+  ws.end()
+})
+
+test('batches according to maxBufferLength', function (t, ctx, done) {
+  var max = 2
+  var ws = ctx.db.createWriteStream({ maxBufferLength: max })
+  var batched = []
+  ctx.db.on('batch', function (batch) {
+    batched.push(batch)
+  })
+  ws.on('close', function () {
+    var length = ctx.sourceData.length
+    t.is(batched.length, length / max, 'correct number of batches')
+    batched.forEach(function (batch) {
+      t.is(batch.length, max, 'correct number of elements per batch')
+    })
+    ctx.verify(ws, done)
+  })
+  ctx.sourceData.forEach(function (d) {
+    ws.write(d)
+  })
   ws.end()
 })
