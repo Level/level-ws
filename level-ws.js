@@ -84,7 +84,15 @@ WriteStream.prototype._write = function write (d, enc, next) {
   }
 
   function push (d) {
-    self._buffer.push(d)
+    self._buffer.push({
+      type: d.type || self._options.type,
+      key: d.key,
+      value: d.value,
+      // TODO remove encodings
+      keyEncoding: d.keyEncoding || self._options.keyEncoding,
+      valueEncoding: (d.valueEncoding || d.encoding ||
+                      self._options.valueEncoding)
+    })
     next()
   }
 
@@ -117,20 +125,6 @@ WriteStream.prototype._batch = function (cb) {
   }
 
   self._buffer = []
-
-  // TODO remove .map(), better to push objects during _write()
-  buffer = buffer.map(function (d) {
-    return {
-      type: d.type || self._options.type,
-      key: d.key,
-      value: d.value,
-      // TODO remove encodings
-      keyEncoding: d.keyEncoding || self._options.keyEncoding,
-      valueEncoding: (d.valueEncoding || d.encoding ||
-                      self._options.valueEncoding)
-    }
-  })
-
   self._db.batch(buffer, cb)
 }
 
