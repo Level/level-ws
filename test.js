@@ -160,6 +160,7 @@ test('test destroy()', function (t, ctx, done) {
 
   var verify = function () {
     t.is(ws.writable, false, 'not writable')
+    t.is(ws.destroyed, true, 'is destroyed')
     var _done = after(ctx.sourceData.length, done)
     ctx.sourceData.forEach(function (data) {
       ctx.db.get(data.key, function (err, value) {
