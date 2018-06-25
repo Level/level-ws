@@ -1,10 +1,10 @@
-var after  = require('after')
-  , tape   = require('tape')
-  , path   = require('path')
-  , fs     = require('fs')
-  , level  = require('level')
-  , rimraf = require('rimraf')
-  , ws     = require('./')
+var after = require('after')
+var tape = require('tape')
+var path = require('path')
+var fs = require('fs')
+var level = require('level')
+var rimraf = require('rimraf')
+var ws = require('./')
 
 function cleanup (callback) {
   fs.readdir(__dirname, function (err, list) {
@@ -30,9 +30,9 @@ function openTestDatabase (options, callback) {
 }
 
 function test (label, options, fn) {
-  if (typeof options == 'function') {
+  if (typeof options === 'function') {
     fn = options
-    options  = {}
+    options = {}
   }
 
   options.createIfMissing = true
@@ -55,10 +55,11 @@ function test (label, options, fn) {
       data.forEach(function (data) {
         ctx.db.get(data.key, function (err, value) {
           t.notOk(err, 'no error')
-          if (typeof value == 'object')
+          if (typeof value === 'object') {
             t.deepEqual(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
-          else
+          } else {
             t.equal(+value, +data.value, 'WriteStream data #' + data.key + ' has correct value')
+          }
           _done()
         })
       })
@@ -80,7 +81,7 @@ function test (label, options, fn) {
   })
 }
 
-//TODO: test various encodings
+// TODO: test various encodings
 
 test('test simple WriteStream', function (t, ctx, done) {
   var ws = ctx.db.createWriteStream()
@@ -105,8 +106,7 @@ test('test WriteStream with async writes', function (t, ctx, done) {
   ws.on('close', ctx.verify.bind(ctx, ws, done))
 
   function write () {
-    if (++i >= sourceData.length)
-      return ws.end()
+    if (++i >= sourceData.length) return ws.end()
 
     var d = sourceData[i]
     // some should batch() and some should put()
@@ -126,7 +126,7 @@ test('test WriteStream with async writes', function (t, ctx, done) {
 
 test('test end accepts data', function (t, ctx, done) {
   var ws = ctx.db.createWriteStream()
-  var i  = 0
+  var i = 0
 
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
@@ -330,7 +330,7 @@ test('test type at key/value level must take precedence on the constructor', { k
     { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
     { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
   ]
-  , exception = data[0]
+  var exception = data[0]
 
   exception['type'] = 'put'
 
@@ -379,7 +379,6 @@ test('test type at key/value level must take precedence on the constructor', { k
 })
 
 test('test that missing type errors', function (t, ctx, done) {
-  var self = this
   var data = { key: 314, type: 'foo' }
   var errored = false
 

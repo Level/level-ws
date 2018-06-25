@@ -5,7 +5,9 @@ level-ws
 
 **A basic WriteStream implementation for [LevelUP](https://github.com/rvagg/node-levelup)**
 
-[![Build Status](https://secure.travis-ci.org/Level/level-ws.png)](http://travis-ci.org/Level/level-ws) [![Greenkeeper badge](https://badges.greenkeeper.io/Level/level-ws.svg)](https://greenkeeper.io/)
+[![Build Status](https://secure.travis-ci.org/Level/level-ws.png)](http://travis-ci.org/Level/level-ws)
+[![Greenkeeper badge](https://badges.greenkeeper.io/Level/level-ws.svg)](https://greenkeeper.io/)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 [![NPM](https://nodei.co/npm/level-ws.png?downloads)](https://nodei.co/npm/level-ws/)
 
