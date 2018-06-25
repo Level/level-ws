@@ -54,8 +54,6 @@ function WriteStream (options, db) {
   this._options = extend(defaultOptions, getOptions(db, options))
   this._db = db
   this._buffer = []
-  this.writable = true
-  this.readable = false
 
   var self = this
 
@@ -63,7 +61,6 @@ function WriteStream (options, db) {
     if (self._buffer && self._buffer.length) {
       return self._flush(f)
     }
-    self.writable = false
     self.emit('close')
   })
 }
@@ -116,7 +113,6 @@ WriteStream.prototype._flush = function (f) {
 
   function cb (err) {
     if (err) {
-      self.writable = false
       self.emit('error', err)
     } else {
       if (f) f()
@@ -133,7 +129,6 @@ WriteStream.prototype.destroy = function () {
   if (this._destroyed) return
   this._buffer = null
   this._destroyed = true
-  this.writable = false
   this.emit('close')
 }
 
