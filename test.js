@@ -49,8 +49,8 @@ function test (label, options, fn) {
     ctx.verify = function (ws, done, data) {
       // can pass alternative data array for verification
       data = data || sourceData
-      t.ok(ws.writable === false, 'not writable')
-      t.ok(ws.readable === false, 'not readable')
+      t.is(ws.writable, false, 'not writable')
+      t.is(ws.readable, false, 'not readable')
       var _done = after(data.length, done)
       data.forEach(function (data) {
         ctx.db.get(data.key, function (err, value) {
@@ -159,7 +159,8 @@ test('test destroy()', function (t, ctx, done) {
   var ws = ctx.db.createWriteStream()
 
   var verify = function () {
-    t.ok(ws.writable === false, 'not writable')
+    t.is(ws.writable, false, 'not writable')
+    t.is(ws.destroyed, true, 'is destroyed')
     var _done = after(ctx.sourceData.length, done)
     ctx.sourceData.forEach(function (data) {
       ctx.db.get(data.key, function (err, value) {
@@ -174,16 +175,16 @@ test('test destroy()', function (t, ctx, done) {
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
-  t.ok(ws.writable === true, 'is writable')
-  t.ok(ws.readable === false, 'not readable')
+  t.is(ws.writable, true, 'is writable')
+  t.is(ws.readable, false, 'not readable')
   ws.on('close', verify.bind(null))
   ctx.sourceData.forEach(function (d) {
     ws.write(d)
-    t.ok(ws.writable === true, 'is writable')
-    t.ok(ws.readable === false, 'not readable')
+    t.is(ws.writable, true, 'is writable')
+    t.is(ws.readable, false, 'not readable')
   })
-  t.ok(ws.writable === true, 'is writable')
-  t.ok(ws.readable === false, 'not readable')
+  t.is(ws.writable, true, 'is writable')
+  t.is(ws.readable, false, 'not readable')
   ws.destroy()
 })
 
@@ -378,13 +379,11 @@ test('test type at key/value level must take precedence on the constructor', { k
   ws.end()
 })
 
-test('test that missing type errors', function (t, ctx, done) {
+test('test that invalid .type errors', function (t, ctx, done) {
   var data = { key: 314, type: 'foo' }
-  var errored = false
 
   function verify () {
     ctx.db.get(data.key, function (err, value) {
-      t.equal(errored, true, 'error received in stream')
       t.ok(err, 'got expected error')
       t.equal(err.notFound, true, 'not found error')
       t.notOk(value, 'did not get value')
@@ -395,9 +394,6 @@ test('test that missing type errors', function (t, ctx, done) {
   var ws = ctx.db.createWriteStream()
   ws.on('error', function (err) {
     t.equal(err.message, '`type` must be \'put\' or \'del\'', 'should error')
-    errored = true
-  })
-  ws.on('close', function () {
     verify()
   })
   ws.write(data)

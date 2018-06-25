@@ -14,8 +14,8 @@
   ],
   "main": "level-ws.js",
   "dependencies": {
+    "flush-write-stream": "^1.0.3",
     "inherits": "^2.0.3",
-    "readable-stream": "^2.2.8",
     "xtend": "^4.0.0"
   },
   "devDependencies": {
