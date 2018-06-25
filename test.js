@@ -394,3 +394,24 @@ test('test that missing type errors', function (t, ctx, done) {
   ws.write(data)
   ws.end()
 })
+
+test('batches according to maxBufferLength', function (t, ctx, done) {
+  var max = 2
+  var ws = ctx.db.createWriteStream({ maxBufferLength: max })
+  var batched = []
+  ctx.db.on('batch', function (batch) {
+    batched.push(batch)
+  })
+  ws.on('close', function () {
+    var length = ctx.sourceData.length
+    t.is(batched.length, length / max, 'correct number of batches')
+    batched.forEach(function (batch) {
+      t.is(batch.length, max, 'correct number of elements per batch')
+    })
+    ctx.verify(ws, done)
+  })
+  ctx.sourceData.forEach(function (d) {
+    ws.write(d)
+  })
+  ws.end()
+})
