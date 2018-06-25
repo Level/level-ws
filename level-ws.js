@@ -60,10 +60,6 @@ function WriteStream (options, db) {
   var self = this
 
   this.on('finish', function f () {
-    if (self._buffer && self._buffer.length) {
-      return self._flush(f)
-    }
-    self.writable = false
     self.emit('close')
   })
 }
@@ -72,7 +68,7 @@ inherits(WriteStream, Writable)
 
 WriteStream.prototype._write = function write (d, enc, next) {
   var self = this
-  if (self._destroyed) return
+  if (self.destroyed) return
 
   if (!self._db.isOpen()) {
     return self._db.once('ready', function () {
@@ -96,7 +92,7 @@ WriteStream.prototype._flush = function (f) {
   var self = this
   var buffer = self._buffer
 
-  if (self._destroyed || !buffer) return
+  if (self.destroyed || !buffer) return
 
   if (!self._db.isOpen()) {
     return self._db.on('ready', function () { self._flush(f) })
@@ -129,10 +125,14 @@ WriteStream.prototype.toString = function () {
   return 'LevelUP.WriteStream'
 }
 
-WriteStream.prototype.destroy = function () {
-  if (this._destroyed) return
+WriteStream.prototype._final = function (cb) {
   this._buffer = null
-  this._destroyed = true
+  this.writable = false
+  process.nextTick(cb)
+}
+
+WriteStream.prototype._destroy = function () {
+  this._buffer = null
   this.writable = false
   this.emit('close')
 }
