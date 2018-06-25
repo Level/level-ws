@@ -43,7 +43,11 @@ function test (label, options, fn) {
 
     var sourceData = ctx.sourceData = []
     for (var i = 0; i < 10; i++) {
-      ctx.sourceData.push({ type: 'put', key: i, value: Math.random() })
+      ctx.sourceData.push({
+        type: 'put',
+        key: String(i),
+        value: String(i)
+      })
     }
 
     ctx.verify = function (ws, done, data) {
@@ -52,12 +56,8 @@ function test (label, options, fn) {
       var _done = after(data.length, done)
       data.forEach(function (data) {
         ctx.db.get(data.key, function (err, value) {
-          t.notOk(err, 'no error')
-          if (typeof value === 'object') {
-            t.deepEqual(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
-          } else {
-            t.equal(+value, +data.value, 'WriteStream data #' + data.key + ' has correct value')
-          }
+          t.error(err, 'no error')
+          t.same(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
           _done()
         })
       })
