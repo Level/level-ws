@@ -1,4 +1,4 @@
-var Writable = require('readable-stream').Writable
+var Writable = require('flush-write-stream')
 var inherits = require('inherits')
 var extend = require('xtend')
 
@@ -49,7 +49,7 @@ function WriteStream (options, db) {
     return new WriteStream(options, db)
   }
 
-  Writable.call(this, { objectMode: true })
+  Writable.call(this, { objectMode: true }, write.bind(this), flush.bind(this))
 
   this._options = extend(defaultOptions, getOptions(db, options))
   this._db = db
@@ -59,10 +59,7 @@ function WriteStream (options, db) {
 
   var self = this
 
-  this.on('finish', function f () {
-    if (self._buffer && self._buffer.length) {
-      return self._flush(f)
-    }
+  this.on('finish', function () {
     self.writable = false
     self.emit('close')
   })
@@ -70,20 +67,15 @@ function WriteStream (options, db) {
 
 inherits(WriteStream, Writable)
 
-WriteStream.prototype._write = function write (d, enc, next) {
+function write (d, enc, next) {
   var self = this
-  if (self._destroyed) return
-
-  if (!self._db.isOpen()) {
-    return self._db.once('ready', function () {
-      write.call(self, d, enc, next)
-    })
-  }
+  if (self.destroyed) return
 
   if (self._options.maxBufferLength &&
       self._buffer.length > self._options.maxBufferLength) {
     self.once('_flush', next)
   } else {
+    // TODO this doesn't seem to make any difference, keeping for now
     if (self._buffer.length === 0) {
       process.nextTick(function () { self._flush() })
     }
@@ -92,15 +84,11 @@ WriteStream.prototype._write = function write (d, enc, next) {
   }
 }
 
-WriteStream.prototype._flush = function (f) {
+function flush (f) {
   var self = this
+  if (self.destroyed) return
+
   var buffer = self._buffer
-
-  if (self._destroyed || !buffer) return
-
-  if (!self._db.isOpen()) {
-    return self._db.on('ready', function () { self._flush(f) })
-  }
   self._buffer = []
 
   self._db.batch(buffer.map(function (d) {
@@ -124,15 +112,14 @@ WriteStream.prototype._flush = function (f) {
     }
   }
 }
-
 WriteStream.prototype.toString = function () {
   return 'LevelUP.WriteStream'
 }
 
 WriteStream.prototype.destroy = function () {
-  if (this._destroyed) return
+  if (this.destroyed) return
   this._buffer = null
-  this._destroyed = true
+  this.destroyed = true
   this.writable = false
   this.emit('close')
 }

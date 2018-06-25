@@ -378,13 +378,11 @@ test('test type at key/value level must take precedence on the constructor', { k
   ws.end()
 })
 
-test('test that missing type errors', function (t, ctx, done) {
+test('test that invalid .type errors', function (t, ctx, done) {
   var data = { key: 314, type: 'foo' }
-  var errored = false
 
   function verify () {
     ctx.db.get(data.key, function (err, value) {
-      t.equal(errored, true, 'error received in stream')
       t.ok(err, 'got expected error')
       t.equal(err.notFound, true, 'not found error')
       t.notOk(value, 'did not get value')
@@ -395,9 +393,6 @@ test('test that missing type errors', function (t, ctx, done) {
   var ws = ctx.db.createWriteStream()
   ws.on('error', function (err) {
     t.equal(err.message, '`type` must be \'put\' or \'del\'', 'should error')
-    errored = true
-  })
-  ws.on('close', function () {
     verify()
   })
   ws.write(data)
