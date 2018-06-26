@@ -116,9 +116,10 @@ WriteStream.prototype.toString = function () {
   return 'LevelUP.WriteStream'
 }
 
-WriteStream.prototype._destroy = function () {
+WriteStream.prototype._destroy = function (err, cb) {
   this._buffer = null
   this.emit('close')
+  cb(err)
 }
 
 WriteStream.prototype.destroySoon = function () {
