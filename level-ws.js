@@ -69,7 +69,7 @@ inherits(WriteStream, Writable)
 
 WriteStream.prototype._write = function (d, enc, next) {
   var self = this
-  if (self._destroyed) return
+  if (self.destroyed) return
 
   if (self._options.maxBufferLength &&
       self._buffer.length > self._options.maxBufferLength) {
@@ -87,7 +87,7 @@ WriteStream.prototype._flush = function (f) {
   var self = this
   var buffer = self._buffer
 
-  if (self._destroyed || !buffer) return
+  if (self.destroyed || !buffer) return
 
   self._buffer = []
 
@@ -116,10 +116,8 @@ WriteStream.prototype.toString = function () {
   return 'LevelUP.WriteStream'
 }
 
-WriteStream.prototype.destroy = function () {
-  if (this._destroyed) return
+WriteStream.prototype._destroy = function () {
   this._buffer = null
-  this._destroyed = true
   this.emit('close')
 }
 
