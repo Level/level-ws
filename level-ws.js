@@ -67,15 +67,9 @@ function WriteStream (options, db) {
 
 inherits(WriteStream, Writable)
 
-WriteStream.prototype._write = function write (d, enc, next) {
+WriteStream.prototype._write = function (d, enc, next) {
   var self = this
   if (self._destroyed) return
-
-  if (!self._db.isOpen()) {
-    return self._db.once('ready', function () {
-      write.call(self, d, enc, next)
-    })
-  }
 
   if (self._options.maxBufferLength &&
       self._buffer.length > self._options.maxBufferLength) {
@@ -95,9 +89,6 @@ WriteStream.prototype._flush = function (f) {
 
   if (self._destroyed || !buffer) return
 
-  if (!self._db.isOpen()) {
-    return self._db.on('ready', function () { self._flush(f) })
-  }
   self._buffer = []
 
   self._db.batch(buffer.map(function (d) {
