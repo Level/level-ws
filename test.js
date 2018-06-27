@@ -4,7 +4,7 @@ var path = require('path')
 var fs = require('fs')
 var level = require('level')
 var rimraf = require('rimraf')
-var ws = require('./')
+var WriteStream = require('.')
 
 function cleanup (callback) {
   fs.readdir(__dirname, function (err, list) {
@@ -65,7 +65,7 @@ function test (label, options, fn) {
 
     openTestDatabase(options, function (err, db) {
       t.notOk(err, 'no error')
-      ctx.db = ws(db)
+      ctx.db = db
       fn(t, ctx, function () {
         ctx.db.close(function (err) {
           t.notOk(err, 'no error')
@@ -82,7 +82,7 @@ function test (label, options, fn) {
 // TODO: test various encodings
 
 test('test simple WriteStream', function (t, ctx, done) {
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -94,7 +94,7 @@ test('test simple WriteStream', function (t, ctx, done) {
 })
 
 test('test WriteStream with async writes', function (t, ctx, done) {
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
   var sourceData = ctx.sourceData
   var i = -1
 
@@ -123,7 +123,7 @@ test('test WriteStream with async writes', function (t, ctx, done) {
 })
 
 test('test end accepts data', function (t, ctx, done) {
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
   var i = 0
 
   ws.on('error', function (err) {
@@ -142,7 +142,7 @@ test('test end accepts data', function (t, ctx, done) {
 
 // at the moment, destroySoon() is basically just end()
 test('test destroySoon()', function (t, ctx, done) {
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -154,7 +154,7 @@ test('test destroySoon()', function (t, ctx, done) {
 })
 
 test('test destroy()', function (t, ctx, done) {
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
 
   var verify = function () {
     var _done = after(ctx.sourceData.length, done)
@@ -191,7 +191,7 @@ test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, funct
     { type: 'put', key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
   ]
 
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -216,7 +216,7 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
   ]
 
   function del () {
-    var delStream = ctx.db.createWriteStream()
+    var delStream = WriteStream(ctx.db)
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -243,7 +243,7 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
     })
   }
 
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -270,7 +270,7 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
   ]
 
   function del () {
-    var delStream = ctx.db.createWriteStream({ type: 'del' })
+    var delStream = WriteStream(ctx.db, { type: 'del' })
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -296,7 +296,7 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
     })
   }
 
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -326,7 +326,7 @@ test('test type at key/value level must take precedence on the constructor', { k
   exception['type'] = 'put'
 
   function del () {
-    var delStream = ctx.db.createWriteStream({ type: 'del' })
+    var delStream = WriteStream(ctx.db, { type: 'del' })
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -356,7 +356,7 @@ test('test type at key/value level must take precedence on the constructor', { k
     })
   }
 
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -383,7 +383,7 @@ test('test that missing type errors', function (t, ctx, done) {
     })
   }
 
-  var ws = ctx.db.createWriteStream()
+  var ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.equal(err.message, '`type` must be \'put\' or \'del\'', 'should error')
     errored = true
