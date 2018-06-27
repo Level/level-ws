@@ -44,9 +44,9 @@ function getOptions (levelup, options) {
   )
 }
 
-function WriteStream (options, db) {
+function WriteStream (db, options) {
   if (!(this instanceof WriteStream)) {
-    return new WriteStream(options, db)
+    return new WriteStream(db, options)
   }
 
   Writable.call(this, { objectMode: true })
@@ -126,11 +126,4 @@ WriteStream.prototype.destroySoon = function () {
   this.end()
 }
 
-module.exports = function (db) {
-  db.writeStream = db.createWriteStream = function (options) {
-    return new WriteStream(options, db)
-  }
-  return db
-}
-
-module.exports.WriteStream = WriteStream
+module.exports = WriteStream
