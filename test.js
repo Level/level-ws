@@ -43,18 +43,14 @@ function test (label, options, fn) {
     var ctx = {}
 
     var sourceData = ctx.sourceData = []
-    for (var i = 0; i < 10; i++) {
-      ctx.sourceData.push({ type: 'put', key: String(i), value: 'value' })
+    for (var i = 0; i < 2; i++) {
+      ctx.sourceData.push({ key: String(i), value: 'value' })
     }
 
     ctx.verify = function (ws, done, data) {
       concat(ctx.db.iterator(), function (err, result) {
         t.error(err, 'no error')
-        var expected = (data || sourceData).map(function (item) {
-          delete item.type
-          return item
-        })
-        t.same(result, expected, 'correct data')
+        t.same(result, data || sourceData, 'correct data')
         done()
       })
     }
@@ -172,15 +168,15 @@ test('test destroy()', function (t, ctx, done) {
 
 test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
-    { type: 'put', key: 'aa', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { type: 'put', key: 'ba', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { type: 'put', key: 'ca', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+    { key: 'aa', value: { a: 'complex', obj: 100 } },
+    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ba', value: { a: 'complex', obj: 100 } },
+    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ca', value: { a: 'complex', obj: 100 } },
+    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
   ]
 
   var ws = WriteStream(ctx.db)
@@ -196,15 +192,15 @@ test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, funct
 
 test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
-    { type: 'put', key: 'aa', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { type: 'put', key: 'ba', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { type: 'put', key: 'ca', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+    { key: 'aa', value: { a: 'complex', obj: 100 } },
+    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ba', value: { a: 'complex', obj: 100 } },
+    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ca', value: { a: 'complex', obj: 100 } },
+    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
   ]
 
   function del () {
