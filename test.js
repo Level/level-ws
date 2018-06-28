@@ -5,6 +5,7 @@ var fs = require('fs')
 var level = require('level')
 var rimraf = require('rimraf')
 var WriteStream = require('.')
+var concat = require('level-concat-iterator')
 
 function cleanup (callback) {
   fs.readdir(__dirname, function (err, list) {
@@ -42,24 +43,15 @@ function test (label, options, fn) {
     var ctx = {}
 
     var sourceData = ctx.sourceData = []
-    for (var i = 0; i < 10; i++) {
-      ctx.sourceData.push({ type: 'put', key: i, value: Math.random() })
+    for (var i = 0; i < 2; i++) {
+      ctx.sourceData.push({ key: String(i), value: 'value' })
     }
 
     ctx.verify = function (ws, done, data) {
-      // can pass alternative data array for verification
-      data = data || sourceData
-      var _done = after(data.length, done)
-      data.forEach(function (data) {
-        ctx.db.get(data.key, function (err, value) {
-          t.notOk(err, 'no error')
-          if (typeof value === 'object') {
-            t.deepEqual(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
-          } else {
-            t.equal(+value, +data.value, 'WriteStream data #' + data.key + ' has correct value')
-          }
-          _done()
-        })
+      concat(ctx.db.iterator(), function (err, result) {
+        t.error(err, 'no error')
+        t.same(result, data || sourceData, 'correct data')
+        done()
       })
     }
 
@@ -157,14 +149,10 @@ test('test destroy()', function (t, ctx, done) {
   var ws = WriteStream(ctx.db)
 
   var verify = function () {
-    var _done = after(ctx.sourceData.length, done)
-    ctx.sourceData.forEach(function (data) {
-      ctx.db.get(data.key, function (err, value) {
-        // none of them should exist
-        t.ok(err, 'got expected error')
-        t.notOk(value, 'did not get value')
-        _done()
-      })
+    concat(ctx.db.iterator(), function (err, result) {
+      t.error(err, 'no error')
+      t.same(result, [], 'results should be empty')
+      done()
     })
   }
 
@@ -180,15 +168,15 @@ test('test destroy()', function (t, ctx, done) {
 
 test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
-    { type: 'put', key: 'aa', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { type: 'put', key: 'ba', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { type: 'put', key: 'ca', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+    { key: 'aa', value: { a: 'complex', obj: 100 } },
+    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ba', value: { a: 'complex', obj: 100 } },
+    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ca', value: { a: 'complex', obj: 100 } },
+    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
   ]
 
   var ws = WriteStream(ctx.db)
@@ -204,15 +192,15 @@ test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, funct
 
 test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
-    { type: 'put', key: 'aa', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { type: 'put', key: 'ba', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
-    { type: 'put', key: 'ca', value: { a: 'complex', obj: 100 } },
-    { type: 'put', key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { type: 'put', key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+    { key: 'aa', value: { a: 'complex', obj: 100 } },
+    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ba', value: { a: 'complex', obj: 100 } },
+    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ca', value: { a: 'complex', obj: 100 } },
+    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
+    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
   ]
 
   function del () {
@@ -232,14 +220,10 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
   }
 
   function verify () {
-    var _done = after(data.length, done)
-    data.forEach(function (data) {
-      ctx.db.get(data.key, function (err, value) {
-        // none of them should exist
-        t.ok(err, 'got expected error')
-        t.notOk(value, 'did not get value')
-        _done()
-      })
+    concat(ctx.db.iterator(), function (err, result) {
+      t.error(err, 'no error')
+      t.same(result, [], 'results should be empty')
+      done()
     })
   }
 
@@ -285,14 +269,10 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
   }
 
   function verify () {
-    var _done = after(data.length, done)
-    data.forEach(function (data) {
-      ctx.db.get(data.key, function (err, value) {
-        // none of them should exist
-        t.ok(err, 'got expected error')
-        t.notOk(value, 'did not get value')
-        _done()
-      })
+    concat(ctx.db.iterator(), function (err, result) {
+      t.error(err, 'no error')
+      t.same(result, [], 'results should be empty')
+      done()
     })
   }
 
@@ -341,18 +321,11 @@ test('test type at key/value level must take precedence on the constructor', { k
   }
 
   function verify () {
-    var _done = after(data.length, done)
-    data.forEach(function (data) {
-      ctx.db.get(data.key, function (err, value) {
-        if (data.type === 'put') {
-          t.ok(value, 'got value')
-          _done()
-        } else {
-          t.ok(err, 'got expected error')
-          t.notOk(value, 'did not get value')
-          _done()
-        }
-      })
+    concat(ctx.db.iterator(), function (err, result) {
+      t.error(err, 'no error')
+      var expected = [ { key: data[0].key, value: data[0].value } ]
+      t.same(result, expected, 'only one element')
+      done()
     })
   }
 
