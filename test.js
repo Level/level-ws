@@ -5,6 +5,7 @@ var fs = require('fs')
 var level = require('level')
 var rimraf = require('rimraf')
 var WriteStream = require('.')
+var concat = require('level-concat-iterator')
 
 function cleanup (callback) {
   fs.readdir(__dirname, function (err, list) {
@@ -43,23 +44,18 @@ function test (label, options, fn) {
 
     var sourceData = ctx.sourceData = []
     for (var i = 0; i < 10; i++) {
-      ctx.sourceData.push({ type: 'put', key: i, value: Math.random() })
+      ctx.sourceData.push({ type: 'put', key: String(i), value: 'value' })
     }
 
     ctx.verify = function (ws, done, data) {
-      // can pass alternative data array for verification
-      data = data || sourceData
-      var _done = after(data.length, done)
-      data.forEach(function (data) {
-        ctx.db.get(data.key, function (err, value) {
-          t.notOk(err, 'no error')
-          if (typeof value === 'object') {
-            t.deepEqual(value, data.value, 'WriteStream data #' + data.key + ' has correct value')
-          } else {
-            t.equal(+value, +data.value, 'WriteStream data #' + data.key + ' has correct value')
-          }
-          _done()
+      concat(ctx.db.iterator(), function (err, result) {
+        t.error(err, 'no error')
+        var expected = (data || sourceData).map(function (item) {
+          delete item.type
+          return item
         })
+        t.same(result, expected, 'correct data')
+        done()
       })
     }
 
