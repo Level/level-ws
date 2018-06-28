@@ -153,14 +153,10 @@ test('test destroy()', function (t, ctx, done) {
   var ws = WriteStream(ctx.db)
 
   var verify = function () {
-    var _done = after(ctx.sourceData.length, done)
-    ctx.sourceData.forEach(function (data) {
-      ctx.db.get(data.key, function (err, value) {
-        // none of them should exist
-        t.ok(err, 'got expected error')
-        t.notOk(value, 'did not get value')
-        _done()
-      })
+    concat(ctx.db.iterator(), function (err, result) {
+      t.error(err, 'no error')
+      t.same(result, [], 'results should be empty')
+      done()
     })
   }
 
@@ -228,14 +224,10 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
   }
 
   function verify () {
-    var _done = after(data.length, done)
-    data.forEach(function (data) {
-      ctx.db.get(data.key, function (err, value) {
-        // none of them should exist
-        t.ok(err, 'got expected error')
-        t.notOk(value, 'did not get value')
-        _done()
-      })
+    concat(ctx.db.iterator(), function (err, result) {
+      t.error(err, 'no error')
+      t.same(result, [], 'results should be empty')
+      done()
     })
   }
 
@@ -281,14 +273,10 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
   }
 
   function verify () {
-    var _done = after(data.length, done)
-    data.forEach(function (data) {
-      ctx.db.get(data.key, function (err, value) {
-        // none of them should exist
-        t.ok(err, 'got expected error')
-        t.notOk(value, 'did not get value')
-        _done()
-      })
+    concat(ctx.db.iterator(), function (err, result) {
+      t.error(err, 'no error')
+      t.same(result, [], 'results should be empty')
+      done()
     })
   }
 
@@ -337,18 +325,11 @@ test('test type at key/value level must take precedence on the constructor', { k
   }
 
   function verify () {
-    var _done = after(data.length, done)
-    data.forEach(function (data) {
-      ctx.db.get(data.key, function (err, value) {
-        if (data.type === 'put') {
-          t.ok(value, 'got value')
-          _done()
-        } else {
-          t.ok(err, 'got expected error')
-          t.notOk(value, 'did not get value')
-          _done()
-        }
-      })
+    concat(ctx.db.iterator(), function (err, result) {
+      t.error(err, 'no error')
+      var expected = [ { key: data[0].key, value: data[0].value } ]
+      t.same(result, expected, 'only one element')
+      done()
     })
   }
 
