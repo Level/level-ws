@@ -41,9 +41,8 @@ WriteStream.prototype._write = function (d, enc, next) {
       type: d.type || self._options.type,
       key: d.key,
       value: d.value,
-      keyEncoding: d.keyEncoding || self._options.keyEncoding,
-      valueEncoding: (d.valueEncoding || d.encoding ||
-                      self._options.valueEncoding)
+      keyEncoding: d.keyEncoding,
+      valueEncoding: d.valueEncoding || d.encoding
     })
     next()
   }
