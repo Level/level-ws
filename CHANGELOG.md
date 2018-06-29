@@ -33,6 +33,7 @@
 * Remove `this._db.isOpen()` checks (@ralphtheninja)
 * Remove patching db from the API (@ralphtheninja)
 * Remove encoding options (@ralphtheninja, @vweevers)
+* Remove `.jshintrc` (@ralphtheninja)
 
 ### Fixed
 * Fix erroneous test on missing type (@ralphtheninja)
