@@ -114,6 +114,34 @@ test('test WriteStream with async writes', function (t, ctx, done) {
   write()
 })
 
+test('race condition between batch callback and close event', function (t, ctx, done) {
+  var down = ctx.db.db
+  var _batch = down._batch
+
+  // Delaying the batch should not be a problem
+  down._batch = function (ops, options, cb) {
+    setTimeout(function () {
+      _batch.call(down, ops, options, cb)
+    }, 500)
+  }
+
+  var ws = WriteStream(ctx.db)
+  var i = 0
+
+  ws.on('error', function (err) {
+    t.notOk(err, 'no error')
+  })
+  ws.on('close', ctx.verify.bind(ctx, ws, done))
+  ctx.sourceData.forEach(function (d) {
+    i++
+    if (i < ctx.sourceData.length) {
+      ws.write(d)
+    } else {
+      ws.end(d)
+    }
+  })
+})
+
 test('test end accepts data', function (t, ctx, done) {
   var ws = WriteStream(ctx.db)
   var i = 0
