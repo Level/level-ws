@@ -1,48 +1,7 @@
 var Writable = require('readable-stream').Writable
 var inherits = require('inherits')
-var extend = require('xtend')
 
-var defaultOptions = {
-  type: 'put',
-  keyEncoding: 'utf8',
-  valueEncoding: 'utf8'
-}
-
-// copied from LevelUP
-var encodingNames = [
-  'hex',
-  'utf8',
-  'utf-8',
-  'ascii',
-  'binary',
-  'base64',
-  'ucs2',
-  'ucs-2',
-  'utf16le',
-  'utf-16le'
-]
-
-// copied from LevelUP
-var encodingOpts = (function () {
-  var eo = {}
-  encodingNames.forEach(function (e) {
-    eo[e] = { valueEncoding: e }
-  })
-  return eo
-}())
-
-// copied from LevelUP
-function getOptions (levelup, options) {
-  var s = typeof options === 'string' // just an encoding
-  if (!s && options && options.encoding && !options.valueEncoding) {
-    options.valueEncoding = options.encoding
-  }
-  return extend(
-    (levelup && levelup.options) || {}
-    , s ? encodingOpts[options] || encodingOpts[defaultOptions.valueEncoding]
-      : options
-  )
-}
+var defaultOptions = { type: 'put' }
 
 function WriteStream (db, options) {
   if (!(this instanceof WriteStream)) {
@@ -51,7 +10,7 @@ function WriteStream (db, options) {
 
   Writable.call(this, { objectMode: true })
 
-  this._options = extend(defaultOptions, getOptions(db, options))
+  this._options = Object.assign({}, defaultOptions, options)
   this._db = db
   this._buffer = []
 

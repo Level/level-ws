@@ -15,8 +15,7 @@
   "main": "level-ws.js",
   "dependencies": {
     "inherits": "^2.0.3",
-    "readable-stream": "^2.2.8",
-    "xtend": "^4.0.0"
+    "readable-stream": "^2.2.8"
   },
   "devDependencies": {
     "after": "^0.8.2",
