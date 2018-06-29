@@ -17,6 +17,7 @@
 * Flip parameters in `WriteStream` constructor (@ralphtheninja)
 * Verify results once using `level-concat-iterator` intead of multiple `db.get()` operations (@ralphtheninja)
 * Update README style (@ralphtheninja)
+* Optimize internal batch `_buffer` by pushing transformed data (@ralphtheninja)
 
 ### Added
 * Add node 6, 8, 9 and 10 to Travis (@ralphtheninja)

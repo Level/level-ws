@@ -37,7 +37,14 @@ WriteStream.prototype._write = function (d, enc, next) {
       self._flushing = true
       process.nextTick(function () { self._flush() })
     }
-    self._buffer.push(d)
+    self._buffer.push({
+      type: d.type || self._options.type,
+      key: d.key,
+      value: d.value,
+      keyEncoding: d.keyEncoding || self._options.keyEncoding,
+      valueEncoding: (d.valueEncoding || d.encoding ||
+                      self._options.valueEncoding)
+    })
     next()
   }
 }
@@ -49,17 +56,7 @@ WriteStream.prototype._flush = function () {
   if (self.destroyed || !buffer) return
 
   self._buffer = []
-
-  self._db.batch(buffer.map(function (d) {
-    return {
-      type: d.type || self._options.type,
-      key: d.key,
-      value: d.value,
-      keyEncoding: d.keyEncoding || self._options.keyEncoding,
-      valueEncoding: (d.valueEncoding || d.encoding ||
-                      self._options.valueEncoding)
-    }
-  }), cb)
+  self._db.batch(buffer, cb)
 
   function cb (err) {
     self._flushing = false
