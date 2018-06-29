@@ -7,7 +7,3 @@ node_js:
   - 10
 
 after_success: npm run coverage
-
-notifications:
-  # Merge results of parallel builds
-  webhooks: https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN
