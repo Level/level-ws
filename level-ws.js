@@ -14,13 +14,11 @@ function WriteStream (db, options) {
   this._options = extend(defaultOptions, options)
   this._db = db
   this._buffer = []
+  this._flushing = false
 
   var self = this
 
-  this.on('finish', function f () {
-    if (self._buffer && self._buffer.length) {
-      return self._flush(f)
-    }
+  this.on('finish', function () {
     self.emit('close')
   })
 }
@@ -36,6 +34,7 @@ WriteStream.prototype._write = function (d, enc, next) {
     self.once('_flush', next)
   } else {
     if (self._buffer.length === 0) {
+      self._flushing = true
       process.nextTick(function () { self._flush() })
     }
     self._buffer.push(d)
@@ -43,7 +42,7 @@ WriteStream.prototype._write = function (d, enc, next) {
   }
 }
 
-WriteStream.prototype._flush = function (f) {
+WriteStream.prototype._flush = function () {
   var self = this
   var buffer = self._buffer
 
@@ -63,17 +62,36 @@ WriteStream.prototype._flush = function (f) {
   }), cb)
 
   function cb (err) {
-    if (err) {
-      self.emit('error', err)
-    } else {
-      if (f) f()
-      self.emit('_flush')
+    self._flushing = false
+
+    if (!self.emit('_flush', err) && err) {
+      // There was no _flush listener.
+      self.destroy(err)
     }
   }
 }
 
 WriteStream.prototype.toString = function () {
   return 'LevelUP.WriteStream'
+}
+
+WriteStream.prototype._final = function (cb) {
+  var self = this
+
+  if (this._flushing) {
+    // Wait for scheduled or in-progress _flush()
+    this.once('_flush', function (err) {
+      if (err) return cb(err)
+
+      // There could be additional buffered writes
+      self._final(cb)
+    })
+  } else if (this._buffer && this._buffer.length) {
+    this.once('_flush', cb)
+    this._flush()
+  } else {
+    cb()
+  }
 }
 
 WriteStream.prototype._destroy = function (err, cb) {
