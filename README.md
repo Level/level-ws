@@ -8,6 +8,7 @@
 [![Build Status](https://img.shields.io/travis/Level/level-ws.svg)](http://travis-ci.org/Level/level-ws)
 [![dependencies](https://david-dm.org/Level/level-ws.svg)](https://david-dm.org/level/level-ws)
 [![npm](https://img.shields.io/npm/dm/level-ws.svg)](https://www.npmjs.com/package/level-ws)
+[![Coverage Status](https://coveralls.io/repos/github/Level/level-ws/badge.svg)](https://coveralls.io/github/Level/level-ws)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 `level-ws` provides the most basic general-case WriteStream for `levelup`. It was extracted from the core `levelup` at version 0.18.0.
