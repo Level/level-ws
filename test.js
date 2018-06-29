@@ -6,6 +6,7 @@ var level = require('level')
 var rimraf = require('rimraf')
 var WriteStream = require('.')
 var concat = require('level-concat-iterator')
+var secretListener = require('secret-event-listener')
 
 function cleanup (callback) {
   fs.readdir(__dirname, function (err, list) {
@@ -28,6 +29,18 @@ function openTestDatabase (options, callback) {
     if (err) return callback(err)
     level(location, options, callback)
   })
+}
+
+function monitor (stream) {
+  var order = []
+
+  ;['error', 'finish', 'close'].forEach(function (event) {
+    secretListener(stream, event, function () {
+      order.push(event)
+    })
+  })
+
+  return order
 }
 
 function test (label, options, fn) {
@@ -192,6 +205,31 @@ test('test destroy()', function (t, ctx, done) {
     ws.write(d)
   })
   ws.destroy()
+})
+
+test('test destroy(err)', function (t, ctx, done) {
+  var ws = WriteStream(ctx.db)
+  var order = monitor(ws)
+
+  ws.on('error', function (err) {
+    t.is(err.message, 'user error', 'got error')
+  })
+
+  ws.on('close', function () {
+    t.same(order, ['error', 'close'])
+
+    concat(ctx.db.iterator(), function (err, result) {
+      t.error(err, 'no error')
+      t.same(result, [], 'results should be empty')
+      done()
+    })
+  })
+
+  ctx.sourceData.forEach(function (d) {
+    ws.write(d)
+  })
+
+  ws.destroy(new Error('user error'))
 })
 
 test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
