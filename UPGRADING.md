@@ -42,6 +42,6 @@ var db = level('DB')
 var stream = WriteStream(db, { type: 'del' })
 ```
 
-Internal `this.writable` and `this.readable` was removed. However, `this.writable` still exists due to inheritance, but `this.readable` is now `undefined`.
+Internal `this.writable` and `this.readable` were removed. However, `this.writable` still exists due to inheritance, but `this.readable` is now `undefined`.
 
 Since encodings were removed from `levelup@2` we decided to remove them from `level-ws` as well.
