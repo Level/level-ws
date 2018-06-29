@@ -95,9 +95,16 @@ WriteStream.prototype._final = function (cb) {
 }
 
 WriteStream.prototype._destroy = function (err, cb) {
+  var self = this
+
   this._buffer = null
-  this.emit('close')
   cb(err)
+
+  // TODO when the next readable-stream (mirroring node v10) is out:
+  // remove this. Since nodejs/node#19836, streams always emit close.
+  process.nextTick(function () {
+    self.emit('close')
+  })
 }
 
 WriteStream.prototype.destroySoon = function () {
