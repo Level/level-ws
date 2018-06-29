@@ -40,7 +40,10 @@ WriteStream.prototype._write = function (d, enc, next) {
     self._buffer.push({
       type: d.type || self._options.type,
       key: d.key,
-      value: d.value
+      value: d.value,
+      keyEncoding: d.keyEncoding || self._options.keyEncoding,
+      valueEncoding: (d.valueEncoding || d.encoding ||
+                      self._options.valueEncoding)
     })
     next()
   }
