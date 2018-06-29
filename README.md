@@ -15,6 +15,8 @@
 
 `level-ws` is not a high-performance WriteStream. If your benchmarking shows that your particular usage pattern and data types do not perform well with this WriteStream then you should try one of the alternative WriteStreams available for `levelup` that are optimised for different use-cases.
 
+**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md).
+
 ## Usage
 
 ```js

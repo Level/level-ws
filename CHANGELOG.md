@@ -25,6 +25,7 @@
 * Test race condition (@vweevers)
 * Add `nyc` and `coveralls` (@vweevers)
 * Add `CHANGELOG.md` (@ralphtheninja)
+* Add `UPGRADING.md` (@ralphtheninja)
 
 ### Removed
 * Remove node 0.10, 2, 3, 4 and 5 from Travis (@ralphtheninja)
