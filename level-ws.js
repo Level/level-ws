@@ -33,7 +33,7 @@ WriteStream.prototype._write = function (d, enc, next) {
       self._buffer.length > self._options.maxBufferLength) {
     self.once('_flush', next)
   } else {
-    if (self._buffer.length === 0) {
+    if (!self._flushing) {
       self._flushing = true
       process.nextTick(function () { self._flush() })
     }
