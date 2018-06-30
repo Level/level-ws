@@ -52,7 +52,7 @@ WriteStream.prototype._flush = function () {
   var self = this
   var buffer = self._buffer
 
-  if (self.destroyed || !buffer) return
+  if (self.destroyed) return
 
   self._buffer = []
   self._db.batch(buffer, cb)
