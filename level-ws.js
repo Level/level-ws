@@ -42,7 +42,7 @@ WriteStream.prototype._write = function (data, enc, next) {
 
   if (self._buffer.length >= self._maxBufferLength) {
     self.once('_flush', function (err) {
-      if (err) return next(err)
+      if (err) return self.destroy(err)
       self._write(data, enc, next)
     })
   } else {
