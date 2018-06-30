@@ -70,10 +70,6 @@ WriteStream.prototype._flush = function () {
   }
 }
 
-WriteStream.prototype.toString = function () {
-  return 'LevelUP.WriteStream'
-}
-
 WriteStream.prototype._final = function (cb) {
   var self = this
 
