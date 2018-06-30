@@ -422,3 +422,54 @@ test('test that missing type errors', function (t, ctx, done) {
   ws.write(data)
   ws.end()
 })
+
+;[0, 1, 2, 10, 20, 100].forEach(function (max) {
+  test('test maxBufferLength: ' + max, testMaxBuffer(max, false))
+  test('test maxBufferLength: ' + max + ' (random)', testMaxBuffer(max, true))
+})
+
+function testMaxBuffer (max, randomize) {
+  return function (t, ctx, done) {
+    var ws = WriteStream(ctx.db, { maxBufferLength: max })
+    var sourceData = []
+    var batches = []
+
+    for (var i = 0; i < 20; i++) {
+      sourceData.push({ key: i < 10 ? '0' + i : String(i), value: 'value' })
+    }
+
+    var expectedSize = max || sourceData.length
+    var remaining = sourceData.slice()
+
+    ws.on('close', function () {
+      t.ok(batches.every(function (size, index) {
+        // Last batch may contain additional items
+        return size <= expectedSize || index === batches.length - 1
+      }), 'batch sizes are <= max')
+
+      ctx.verify(ws, done, sourceData)
+    })
+
+    ctx.db.on('batch', function (ops) {
+      batches.push(ops.length)
+    })
+
+    loop()
+
+    function loop () {
+      var toWrite = randomize
+        ? Math.floor(Math.random() * remaining.length + 1)
+        : remaining.length
+
+      remaining.splice(0, toWrite).forEach(function (d) {
+        ws.write(d)
+      })
+
+      if (remaining.length) {
+        setImmediate(loop)
+      } else {
+        ws.end()
+      }
+    }
+  }
+}
