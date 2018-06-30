@@ -31,7 +31,7 @@ var ws = WriteStream(db) // ...
 
 ### `ws = WriteStream(db[, options])`
 
-Creates a [Writable](http://nodejs.org/docs/latest/api/stream.html#stream_class_stream_writable_1) stream which operates in **objectMode**, accepting objects with `'key'` and `'value'` pairs on its `write()` method.
+Creates a [Writable](https://nodejs.org/dist/latest-v8.x/docs/api/stream.html#stream_class_stream_writable) stream which operates in **objectMode**, accepting objects with `'key'` and `'value'` pairs on its `write()` method.
 
 The optional `options` argument may contain:
 
