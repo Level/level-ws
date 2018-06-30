@@ -471,6 +471,29 @@ test('test batch error when buffer is full', function (t, ctx, done) {
   ws.write({ key: 'b', value: 'b' })
 })
 
+test('test destroy while waiting to drain', function (t, ctx, done) {
+  var ws = WriteStream(ctx.db, { maxBufferLength: 1 })
+  var order = monitor(ws)
+
+  ws.on('error', function (err) {
+    t.is(err.message, 'user error', 'got error')
+  })
+
+  ws.on('close', function () {
+    t.same(order, ['error', 'close'])
+    t.end()
+  })
+
+  ws.prependListener('_flush', function (err) {
+    t.ifError(err, 'no _flush error')
+    ws.destroy(new Error('user error'))
+  })
+
+  // Don't end.
+  ws.write({ key: 'a', value: 'a' })
+  ws.write({ key: 'b', value: 'b' })
+})
+
 ;[0, 1, 2, 10, 20, 100].forEach(function (max) {
   test('test maxBufferLength: ' + max, testMaxBuffer(max, false))
   test('test maxBufferLength: ' + max + ' (random)', testMaxBuffer(max, true))
