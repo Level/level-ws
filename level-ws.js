@@ -9,9 +9,14 @@ function WriteStream (db, options) {
     return new WriteStream(db, options)
   }
 
-  Writable.call(this, { objectMode: true })
+  options = extend(defaultOptions, options)
 
-  this._options = extend(defaultOptions, options)
+  Writable.call(this, {
+    objectMode: true,
+    highWaterMark: options.highWaterMark || 16
+  })
+
+  this._options = options
   this._db = db
   this._buffer = []
   this._flushing = false
