@@ -448,6 +448,29 @@ test('test limbo batch error', function (t, ctx, done) {
   ws.write({ key: 'a', value: 'a' })
 })
 
+test('test batch error when buffer is full', function (t, ctx, done) {
+  var ws = WriteStream(ctx.db, { maxBufferLength: 1 })
+  var order = monitor(ws)
+
+  monkeyBatch(ctx.db, function (original, ops, options, cb) {
+    process.nextTick(cb, new Error('batch error'))
+  })
+
+  ws.on('error', function (err) {
+    t.is(err.message, 'batch error', 'got error')
+  })
+
+  ws.on('close', function () {
+    t.same(order, ['error', 'close'])
+    t.end()
+  })
+
+  // Don't end(), because we want the error to follow a
+  // specific code path (when we're waiting to drain).
+  ws.write({ key: 'a', value: 'a' })
+  ws.write({ key: 'b', value: 'b' })
+})
+
 ;[0, 1, 2, 10, 20, 100].forEach(function (max) {
   test('test maxBufferLength: ' + max, testMaxBuffer(max, false))
   test('test maxBufferLength: ' + max + ' (random)', testMaxBuffer(max, true))
