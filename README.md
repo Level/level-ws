@@ -15,6 +15,8 @@
 
 `level-ws` is not a high-performance WriteStream. If your benchmarking shows that your particular usage pattern and data types do not perform well with this WriteStream then you should try one of the alternative WriteStreams available for `levelup` that are optimised for different use-cases.
 
+**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md).
+
 ## Usage
 
 ```js
@@ -55,6 +57,17 @@ ws.end()
 ```
 
 The standard `write()`, `end()` and `destroy()` methods are implemented on the WriteStream. `'drain'`, `'error'`, `'close'` and `'pipe'` events are emitted.
+
+You can specify encodings for individual entries by setting `.keyEncoding` and/or `.valueEncoding`:
+
+```js
+writeStream.write({
+  key: new Buffer([1, 2, 3]),
+  value: { some: 'json' },
+  keyEncoding: 'binary',
+  valueEncoding : 'json'
+})
+```
 
 If individual `write()` operations are performed with a `'type'` property of `'del'`, they will be passed on as `'del'` operations to the batch.
 

@@ -25,6 +25,7 @@
 * Test race condition (@vweevers)
 * Add `nyc` and `coveralls` (@vweevers)
 * Add `CHANGELOG.md` (@ralphtheninja)
+* Add `UPGRADING.md` (@ralphtheninja)
 
 ### Removed
 * Remove node 0.10, 2, 3, 4 and 5 from Travis (@ralphtheninja)
@@ -33,7 +34,7 @@
 * Remove `this.{writable,readable}` state (@ralphtheninja)
 * Remove `this._db.isOpen()` checks (@ralphtheninja)
 * Remove patching db from the API (@ralphtheninja)
-* Remove encoding options (@ralphtheninja, @vweevers)
+* Remove default `'utf8'` encoding and per stream encodings (@ralphtheninja, @vweevers)
 * Remove `.jshintrc` (@ralphtheninja)
 
 ### Fixed
