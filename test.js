@@ -1,35 +1,9 @@
-var after = require('after')
 var tape = require('tape')
-var path = require('path')
-var fs = require('fs')
 var level = require('level')
-var rimraf = require('rimraf')
 var WriteStream = require('.')
 var concat = require('level-concat-iterator')
 var secretListener = require('secret-event-listener')
-
-function cleanup (callback) {
-  fs.readdir(__dirname, function (err, list) {
-    if (err) return callback(err)
-
-    list = list.filter(function (f) {
-      return (/^_level-ws_test_db\./).test(f)
-    })
-
-    var done = after(list.length, callback)
-    list.forEach(function (f) {
-      rimraf(path.join(__dirname, f), done)
-    })
-  })
-}
-
-function openTestDatabase (options, callback) {
-  var location = path.join(__dirname, '_level-ws_test_db.' + Math.random())
-  rimraf(location, function (err) {
-    if (err) return callback(err)
-    level(location, options, callback)
-  })
-}
+var tempy = require('tempy')
 
 function monitor (stream) {
   var order = []
@@ -79,16 +53,13 @@ function test (label, options, fn) {
       })
     }
 
-    openTestDatabase(options, function (err, db) {
+    level(tempy.directory(), options, function (err, db) {
       t.notOk(err, 'no error')
       ctx.db = db
       fn(t, ctx, function () {
         ctx.db.close(function (err) {
           t.notOk(err, 'no error')
-          cleanup(function (err) {
-            t.notOk(err, 'no error')
-            t.end()
-          })
+          t.end()
         })
       })
     })
