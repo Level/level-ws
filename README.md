@@ -58,6 +58,17 @@ ws.end()
 
 The standard `write()`, `end()` and `destroy()` methods are implemented on the WriteStream. `'drain'`, `'error'`, `'close'` and `'pipe'` events are emitted.
 
+You can specify encodings for individual entries by setting `.keyEncoding` and/or `.valueEncoding`:
+
+```js
+writeStream.write({
+  key: new Buffer([1, 2, 3]),
+  value: { some: 'json' },
+  keyEncoding: 'binary',
+  valueEncoding : 'json'
+})
+```
+
 If individual `write()` operations are performed with a `'type'` property of `'del'`, they will be passed on as `'del'` operations to the batch.
 
 ```js

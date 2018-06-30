@@ -34,7 +34,7 @@
 * Remove `this.{writable,readable}` state (@ralphtheninja)
 * Remove `this._db.isOpen()` checks (@ralphtheninja)
 * Remove patching db from the API (@ralphtheninja)
-* Remove encoding options (@ralphtheninja, @vweevers)
+* Remove default `'utf8'` encoding and per stream encodings (@ralphtheninja, @vweevers)
 * Remove `.jshintrc` (@ralphtheninja)
 
 ### Fixed

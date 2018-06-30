@@ -44,4 +44,13 @@ var stream = WriteStream(db, { type: 'del' })
 
 Internally `this.writable` and `this.readable` were removed. However, `this.writable` still exists due to inheritance, but `this.readable` is now `undefined`.
 
-Since encodings were removed from `levelup@2` we decided to remove them from `level-ws` as well.
+Default `'utf8'` encoding was removed and also per stream encodings. However, it's still possible to specify encodings for individual entries. This means if you previously relied on per stream encodings, you must specify this in calls to `.write()`:
+
+```js
+writeStream.write({
+  key: new Buffer([1, 2, 3]),
+  value: { some: 'json' },
+  keyEncoding: 'binary',
+  valueEncoding : 'json'
+})
+```
