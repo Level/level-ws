@@ -17,15 +17,18 @@ function monitor (stream) {
   return order
 }
 
-function slowdown (db) {
+function monkeyBatch (db, fn) {
   var down = db.db
-  var _batch = down._batch
+  var original = down._batch.bind(down)
+  down._batch = fn.bind(down, original)
+}
 
-  down._batch = function (ops, options, cb) {
+function slowdown (db) {
+  monkeyBatch(db, function (original, ops, options, cb) {
     setTimeout(function () {
-      _batch.call(down, ops, options, cb)
+      original(ops, options, cb)
     }, 500)
-  }
+  })
 }
 
 function test (label, options, fn) {
@@ -421,6 +424,28 @@ test('test that missing type errors', function (t, ctx, done) {
   })
   ws.write(data)
   ws.end()
+})
+
+test('test limbo batch error', function (t, ctx, done) {
+  var ws = WriteStream(ctx.db)
+  var order = monitor(ws)
+
+  monkeyBatch(ctx.db, function (original, ops, options, cb) {
+    process.nextTick(cb, new Error('batch error'))
+  })
+
+  ws.on('error', function (err) {
+    t.is(err.message, 'batch error')
+  })
+
+  ws.on('close', function () {
+    t.same(order, ['error', 'close'])
+    t.end()
+  })
+
+  // Don't end(), because we want the error to follow a
+  // specific code path (when there is no _flush listener).
+  ws.write({ key: 'a', value: 'a' })
 })
 
 ;[0, 1, 2, 10, 20, 100].forEach(function (max) {
