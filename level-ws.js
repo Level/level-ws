@@ -25,7 +25,7 @@ function WriteStream (db, options) {
 
 inherits(WriteStream, Writable)
 
-WriteStream.prototype._write = function (d, enc, next) {
+WriteStream.prototype._write = function (data, enc, next) {
   var self = this
   if (self.destroyed) return
 
@@ -37,13 +37,7 @@ WriteStream.prototype._write = function (d, enc, next) {
       self._flushing = true
       process.nextTick(function () { self._flush() })
     }
-    self._buffer.push({
-      type: d.type || self._options.type,
-      key: d.key,
-      value: d.value,
-      keyEncoding: d.keyEncoding,
-      valueEncoding: d.valueEncoding || d.encoding
-    })
+    self._buffer.push(extend({ type: self._options.type }, data))
     next()
   }
 }
