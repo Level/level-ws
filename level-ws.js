@@ -103,8 +103,4 @@ WriteStream.prototype._destroy = function (err, cb) {
   })
 }
 
-WriteStream.prototype.destroySoon = function () {
-  this.end()
-}
-
 module.exports = WriteStream

@@ -204,19 +204,6 @@ test('test end accepts data', function (t, ctx, done) {
   })
 })
 
-// at the moment, destroySoon() is basically just end()
-test('test destroySoon()', function (t, ctx, done) {
-  var ws = WriteStream(ctx.db)
-  ws.on('error', function (err) {
-    t.notOk(err, 'no error')
-  })
-  ws.on('close', ctx.verify.bind(ctx, ws, done))
-  ctx.sourceData.forEach(function (d) {
-    ws.write(d)
-  })
-  ws.destroySoon()
-})
-
 test('test destroy()', function (t, ctx, done) {
   var ws = WriteStream(ctx.db)
 
