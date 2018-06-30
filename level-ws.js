@@ -20,6 +20,7 @@ function WriteStream (db, options) {
   this._db = db
   this._buffer = []
   this._flushing = false
+  this._maxBufferLength = options.maxBufferLength || Infinity
 
   var self = this
 
@@ -34,14 +35,17 @@ WriteStream.prototype._write = function (data, enc, next) {
   var self = this
   if (self.destroyed) return
 
-  if (self._options.maxBufferLength &&
-      self._buffer.length > self._options.maxBufferLength) {
-    self.once('_flush', next)
+  if (!self._flushing) {
+    self._flushing = true
+    process.nextTick(function () { self._flush() })
+  }
+
+  if (self._buffer.length >= self._maxBufferLength) {
+    self.once('_flush', function (err) {
+      if (err) return next(err)
+      self._write(data, enc, next)
+    })
   } else {
-    if (!self._flushing) {
-      self._flushing = true
-      process.nextTick(function () { self._flush() })
-    }
     self._buffer.push(extend({ type: self._options.type }, data))
     next()
   }
