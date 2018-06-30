@@ -75,7 +75,7 @@
 :seedling: Initial release.
 
 [Unreleased]: https://github.com/level/level-ws/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/level/level-ws/compare/0.1.0...v1.0.0
-[0.1.0]: https://github.com/level/level-ws/compare/v0.0.1...0.1.0
-[0.0.1]: https://github.com/level/level-ws/compare/0.0.0...v0.0.1
+[1.0.0]: https://github.com/level/level-ws/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/level/level-ws/compare/v0.0.1...v0.1.0
+[0.0.1]: https://github.com/level/level-ws/compare/v0.0.0...v0.0.1
 
