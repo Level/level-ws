@@ -43,6 +43,17 @@ function monitor (stream) {
   return order
 }
 
+function slowdown (db) {
+  var down = db.db
+  var _batch = down._batch
+
+  down._batch = function (ops, options, cb) {
+    setTimeout(function () {
+      _batch.call(down, ops, options, cb)
+    }, 500)
+  }
+}
+
 function test (label, options, fn) {
   if (typeof options === 'function') {
     fn = options
@@ -128,15 +139,8 @@ test('test WriteStream with async writes', function (t, ctx, done) {
 })
 
 test('race condition between batch callback and close event', function (t, ctx, done) {
-  var down = ctx.db.db
-  var _batch = down._batch
-
   // Delaying the batch should not be a problem
-  down._batch = function (ops, options, cb) {
-    setTimeout(function () {
-      _batch.call(down, ops, options, cb)
-    }, 500)
-  }
+  slowdown(ctx.db)
 
   var ws = WriteStream(ctx.db)
   var i = 0
@@ -152,6 +156,33 @@ test('race condition between batch callback and close event', function (t, ctx, 
     } else {
       ws.end(d)
     }
+  })
+})
+
+test('race condition between two flushes', function (t, ctx, done) {
+  slowdown(ctx.db)
+
+  var ws = WriteStream(ctx.db)
+  var order = monitor(ws)
+
+  ws.on('close', function () {
+    t.same(order, ['batch', 'batch', 'close'])
+
+    ctx.verify(ws, done, [
+      { key: 'a', value: 'a' },
+      { key: 'b', value: 'b' }
+    ])
+  })
+
+  ctx.db.on('batch', function () {
+    order.push('batch')
+  })
+
+  ws.write({ key: 'a', value: 'a' })
+
+  // Schedule another flush while the first is in progress
+  ctx.db.once('batch', function (ops) {
+    ws.end({ key: 'b', value: 'b' })
   })
 })
 
