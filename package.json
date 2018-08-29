@@ -24,7 +24,7 @@
     "level-concat-iterator": "^2.0.0",
     "nyc": "~12.0.2",
     "secret-event-listener": "~1.0.0",
-    "standard": "^11.0.1",
+    "standard": "^12.0.0",
     "tape": "^4.9.0",
     "tempy": "^0.2.1"
   },
