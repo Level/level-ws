@@ -16,7 +16,6 @@
   "dependencies": {
     "inherits": "^2.0.3",
     "readable-stream": "^2.2.8",
-    "xtend": "^4.0.1"
   },
   "devDependencies": {
     "coveralls": "~3.0.1",
