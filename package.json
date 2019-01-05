@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/Level/level-ws",
   "keywords": [
+    "level",
     "leveldb",
     "stream",
     "levelup"
