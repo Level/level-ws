@@ -1,18 +1,14 @@
 {
   "name": "level-ws",
-  "description": "A basic WriteStream implementation for LevelUP",
   "version": "1.0.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Level/level-ws.git"
-  },
-  "homepage": "https://github.com/Level/level-ws",
-  "keywords": [
-    "leveldb",
-    "stream",
-    "levelup"
-  ],
+  "description": "A basic WriteStream implementation for LevelUP",
+  "license": "MIT",
   "main": "level-ws.js",
+  "scripts": {
+    "test": "standard && hallmark && nyc node test.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "hallmark": "hallmark --fix"
+  },
   "dependencies": {
     "inherits": "^2.0.3",
     "readable-stream": "^3.1.0",
@@ -20,7 +16,9 @@
   },
   "devDependencies": {
     "coveralls": "~3.0.1",
+    "hallmark": "^0.1.0",
     "level": "^4.0.0",
+    "level-community": "^3.0.0",
     "level-concat-iterator": "^2.0.0",
     "nyc": "~12.0.2",
     "secret-event-listener": "~1.0.0",
@@ -28,11 +26,23 @@
     "tape": "^4.9.0",
     "tempy": "^0.2.1"
   },
-  "scripts": {
-    "test": "standard && nyc node test.js",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  "hallmark": {
+    "community": "level-community",
+    "ignore": [
+      "CONTRIBUTORS.md"
+    ]
   },
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Level/level-ws.git"
+  },
+  "homepage": "https://github.com/Level/level-ws",
+  "keywords": [
+    "level",
+    "leveldb",
+    "stream",
+    "levelup"
+  ],
   "engines": {
     "node": ">=6"
   }

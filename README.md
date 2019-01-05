@@ -35,9 +35,9 @@ Creates a [Writable](https://nodejs.org/dist/latest-v8.x/docs/api/stream.html#st
 
 The optional `options` argument may contain:
 
-* `type` *(string, default: `'put'`)*: Default batch operation for missing `type` property during `ws.write()`.
+- `type` _(string, default: `'put'`)_: Default batch operation for missing `type` property during `ws.write()`.
 
-The WriteStream will buffer writes and submit them as a `batch()` operations where writes occur *within the same tick*.
+The WriteStream will buffer writes and submit them as a `batch()` operations where writes occur _within the same tick_.
 
 ```js
 var ws = WriteStream(db)
@@ -88,7 +88,7 @@ ws.write({ type: 'del', key: 'occupation' })
 ws.end()
 ```
 
-If the *WriteStream* is created with a `'type'` option of `'del'`, all `write()` operations will be interpreted as `'del'`, unless explicitly specified as `'put'`.
+If the _WriteStream_ is created with a `'type'` option of `'del'`, all `write()` operations will be interpreted as `'del'`, unless explicitly specified as `'put'`.
 
 ```js
 var ws = WriteStream(db, { type: 'del' })
@@ -108,8 +108,16 @@ ws.write({ key: 'occupation' })
 ws.end()
 ```
 
+## Contributing
+
+[`Level/level-ws`](https://github.com/Level/level-ws) is an **OPEN Open Source Project**. This means that:
+
+> Individuals making significant and valuable contributions are given commit-access to the project to contribute as they see fit. This project is more like an open wiki than a standard guarded open source project.
+
+See the [Contribution Guide](https://github.com/Level/community/blob/master/CONTRIBUTING.md) for more details.
+
 ## License
 
-[MIT](./LICENSE.md) © 2012-present `level-ws` [Contributors](./CONTRIBUTORS.md).
+[MIT](LICENSE.md) © 2012-present [Contributors](CONTRIBUTORS.md).
 
 [level-badge]: http://leveldb.org/img/badge.svg
