@@ -17,6 +17,7 @@
     "coveralls": "~3.0.1",
     "hallmark": "^0.1.0",
     "level": "^4.0.0",
+    "level-community": "^3.0.0",
     "level-concat-iterator": "^2.0.0",
     "nyc": "~12.0.2",
     "secret-event-listener": "~1.0.0",
