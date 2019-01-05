@@ -25,6 +25,12 @@
     "tape": "^4.9.0",
     "tempy": "^0.2.1"
   },
+  "hallmark": {
+    "community": "level-community",
+    "ignore": [
+      "CONTRIBUTORS.md"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Level/level-ws.git"
