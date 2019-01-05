@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [Unreleased][unreleased]
 
 ## [1.0.0] - 2018-06-30
 
@@ -81,7 +81,7 @@
 
 :seedling: Initial release.
 
-[Unreleased]: https://github.com/level/level-ws/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/level/level-ws/compare/v1.0.0...HEAD
 
 [1.0.0]: https://github.com/level/level-ws/compare/v0.1.0...v1.0.0
 
