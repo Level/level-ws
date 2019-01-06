@@ -1,12 +1,11 @@
 # level-ws
 
-> A basic WriteStream implementation for [levelup](https://github.com/level/levelup)
+> A basic WriteStream implementation for [levelup](https://github.com/Level/levelup)
 
-[![level badge][level-badge]](https://github.com/level/awesome)
+[![level badge][level-badge]](https://github.com/Level/awesome)
 [![npm](https://img.shields.io/npm/v/level-ws.svg?label=&logo=npm)](https://www.npmjs.com/package/level-ws)
 [![Node version](https://img.shields.io/node/v/level-ws.svg)](https://www.npmjs.com/package/level-ws)
-[![Build Status](https://img.shields.io/travis/Level/level-ws.svg?logo=travis&label=)](http://travis-ci.org/Level/level-ws)
-[![dependencies](https://david-dm.org/Level/level-ws.svg)](https://david-dm.org/level/level-ws)
+[![Travis](https://img.shields.io/travis/Level/level-ws.svg?logo=travis&label=)](https://travis-ci.org/Level/level-ws)
 [![npm](https://img.shields.io/npm/dm/level-ws.svg?label=dl)](https://www.npmjs.com/package/level-ws)
 [![Coverage Status](https://coveralls.io/repos/github/Level/level-ws/badge.svg)](https://coveralls.io/github/Level/level-ws)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
