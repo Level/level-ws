@@ -1,6 +1,22 @@
 # Changelog
 
+_**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md)._
+
 ## [Unreleased][unreleased]
+
+## [2.0.0] - 2019-03-30
+
+### Changed
+
+- Upgrade `readable-stream` from `^2.2.8` to `^3.1.0` ([#105](https://github.com/Level/level-ws/issues/105)) ([**@ralphtheninja**](https://github.com/ralphtheninja))
+- Upgrade `level` devDependency from `^4.0.0` to `^5.0.1` ([#109](https://github.com/Level/level-ws/issues/109)) ([**@vweevers**](https://github.com/vweevers))
+- Upgrade `nyc` devDependency from `^12.0.2` to `^13.2.0` ([#108](https://github.com/Level/level-ws/issues/108)) ([**@vweevers**](https://github.com/vweevers))
+- Upgrade `standard` devDependency from `^11.0.1` to `^12.0.0` ([#102](https://github.com/Level/level-ws/issues/102)) ([**@ralphtheninja**](https://github.com/ralphtheninja))
+- Apply common project tweaks ([#106](https://github.com/Level/level-ws/issues/106), [#107](https://github.com/Level/level-ws/issues/107)) ([**@vweevers**](https://github.com/vweevers))
+
+### Removed
+
+- Remove node 9 ([`6e1ef3b`](https://github.com/Level/level-ws/commit/6e1ef3b)) ([**@ralphtheninja**](https://github.com/ralphtheninja))
 
 ## [1.0.0] - 2018-06-30
 
@@ -81,7 +97,9 @@
 
 :seedling: Initial release.
 
-[unreleased]: https://github.com/level/level-ws/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/level/level-ws/compare/v2.0.0...HEAD
+
+[2.0.0]: https://github.com/level/level-ws/compare/v1.0.0...v2.0.0
 
 [1.0.0]: https://github.com/level/level-ws/compare/v0.1.0...v1.0.0
 
