@@ -227,14 +227,14 @@ test('test destroy(err)', function (t, ctx, done) {
 test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
     { key: 'aa', value: { a: 'complex', obj: 100 } },
-    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ab', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'ac', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
     { key: 'ba', value: { a: 'complex', obj: 100 } },
-    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'bb', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'bc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
     { key: 'ca', value: { a: 'complex', obj: 100 } },
-    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+    { key: 'cb', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'cc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } }
   ]
 
   var ws = WriteStream(ctx.db)
@@ -251,14 +251,14 @@ test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, funct
 test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
     { key: 'aa', value: { a: 'complex', obj: 100 } },
-    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ab', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'ac', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
     { key: 'ba', value: { a: 'complex', obj: 100 } },
-    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'bb', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'bc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
     { key: 'ca', value: { a: 'complex', obj: 100 } },
-    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+    { key: 'cb', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'cc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } }
   ]
 
   function del () {
@@ -301,14 +301,14 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
 test('test del capabilities as constructor option', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
     { key: 'aa', value: { a: 'complex', obj: 100 } },
-    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ab', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'ac', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
     { key: 'ba', value: { a: 'complex', obj: 100 } },
-    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'bb', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'bc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
     { key: 'ca', value: { a: 'complex', obj: 100 } },
-    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+    { key: 'cb', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'cc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } }
   ]
 
   function del () {
@@ -350,14 +350,14 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
 test('test type at key/value level must take precedence on the constructor', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
   var data = [
     { key: 'aa', value: { a: 'complex', obj: 100 } },
-    { key: 'ab', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'ac', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'ab', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'ac', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
     { key: 'ba', value: { a: 'complex', obj: 100 } },
-    { key: 'bb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'bc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } },
+    { key: 'bb', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'bc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
     { key: 'ca', value: { a: 'complex', obj: 100 } },
-    { key: 'cb', value: { b: 'foo', bar: [ 1, 2, 3 ] } },
-    { key: 'cc', value: { c: 'w00t', d: { e: [ 0, 10, 20, 30 ], f: 1, g: 'wow' } } }
+    { key: 'cb', value: { b: 'foo', bar: [1, 2, 3] } },
+    { key: 'cc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } }
   ]
   var exception = data[0]
 
@@ -381,7 +381,7 @@ test('test type at key/value level must take precedence on the constructor', { k
   function verify () {
     concat(ctx.db.iterator(), function (err, result) {
       t.error(err, 'no error')
-      var expected = [ { key: data[0].key, value: data[0].value } ]
+      var expected = [{ key: data[0].key, value: data[0].value }]
       t.same(result, expected, 'only one element')
       done()
     })
