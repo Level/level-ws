@@ -361,7 +361,7 @@ test('test type at key/value level must take precedence on the constructor', { k
   ]
   var exception = data[0]
 
-  exception['type'] = 'put'
+  exception.type = 'put'
 
   function del () {
     var delStream = WriteStream(ctx.db, { type: 'del' })
