@@ -2,8 +2,6 @@
 
 _**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md)._
 
-## [Unreleased][unreleased]
-
 ## [2.0.0] - 2019-03-30
 
 ### Changed
@@ -97,12 +95,10 @@ _**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md)._
 
 :seedling: Initial release.
 
-[unreleased]: https://github.com/level/level-ws/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/Level/level-ws/compare/v1.0.0...v2.0.0
 
-[2.0.0]: https://github.com/level/level-ws/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/Level/level-ws/compare/v0.1.0...v1.0.0
 
-[1.0.0]: https://github.com/level/level-ws/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/Level/level-ws/compare/v0.0.1...v0.1.0
 
-[0.1.0]: https://github.com/level/level-ws/compare/v0.0.1...v0.1.0
-
-[0.0.1]: https://github.com/level/level-ws/compare/v0.0.0...v0.0.1
+[0.0.1]: https://github.com/Level/level-ws/compare/v0.0.0...v0.0.1
