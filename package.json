@@ -19,7 +19,7 @@
   "devDependencies": {
     "coveralls": "^3.0.1",
     "dependency-check": "^3.3.0",
-    "hallmark": "^2.0.0",
+    "hallmark": "^3.1.0",
     "level": "^6.0.0",
     "level-community": "^3.0.0",
     "level-concat-iterator": "^2.0.0",
