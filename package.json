@@ -6,7 +6,7 @@
   "main": "level-ws.js",
   "scripts": {
     "test": "standard && hallmark && nyc node test.js",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "coverage": "nyc report -r lcovonly",
     "hallmark": "hallmark --fix",
     "dependency-check": "dependency-check . test.js",
     "prepublishOnly": "npm run dependency-check"
@@ -17,7 +17,6 @@
     "xtend": "^4.0.1"
   },
   "devDependencies": {
-    "coveralls": "^3.0.1",
     "dependency-check": "^3.3.0",
     "hallmark": "^3.1.0",
     "level": "^6.0.0",
