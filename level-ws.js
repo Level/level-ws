@@ -2,7 +2,6 @@
 
 const Writable = require('readable-stream').Writable
 const inherits = require('inherits')
-const extend = require('xtend')
 
 const defaultOptions = { type: 'put' }
 
@@ -11,7 +10,7 @@ function WriteStream (db, options) {
     return new WriteStream(db, options)
   }
 
-  options = extend(defaultOptions, options)
+  options = Object.assign({}, defaultOptions, options)
 
   Writable.call(this, {
     objectMode: true,
@@ -45,7 +44,7 @@ WriteStream.prototype._write = function (data, enc, next) {
       this._write(data, enc, next)
     })
   } else {
-    this._buffer.push(extend({ type: this._options.type }, data))
+    this._buffer.push(Object.assign({ type: this._options.type }, data))
     next()
   }
 }
