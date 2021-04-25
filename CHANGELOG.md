@@ -1,6 +1,13 @@
 # Changelog
 
+## [3.0.0] - 2021-04-25
+
 _**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md)._
+
+### Changed
+
+- **Breaking:** drop node 6 and 8 ([Level/community#98](https://github.com/Level/community/issues/98)) ([`2b04c28`](https://github.com/Level/level-ws/commit/2b04c28)) (Vincent Weevers)
+- **Breaking:** modernize syntax ([Level/community#98](https://github.com/Level/community/issues/98)) ([`2319634`](https://github.com/Level/level-ws/commit/2319634), [`3fc0829`](https://github.com/Level/level-ws/commit/3fc0829)) (Vincent Weevers)
 
 ## [2.0.0] - 2019-03-30
 
@@ -91,9 +98,11 @@ _**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md)._
 
 - Add Travis ([**@rvagg**](https://github.com/rvagg))
 
-## 0.0.0 - 2013-10-12
+## [0.0.0] - 2013-10-12
 
 :seedling: Initial release.
+
+[3.0.0]: https://github.com/Level/level-ws/compare/v2.0.0...v3.0.0
 
 [2.0.0]: https://github.com/Level/level-ws/compare/v1.0.0...v2.0.0
 
@@ -102,3 +111,5 @@ _**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md)._
 [0.1.0]: https://github.com/Level/level-ws/compare/v0.0.1...v0.1.0
 
 [0.0.1]: https://github.com/Level/level-ws/compare/v0.0.0...v0.0.1
+
+[0.0.0]: https://github.com/Level/level-ws/releases/tag/v0.0.0
