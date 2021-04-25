@@ -2,11 +2,11 @@
 
 This document describes breaking changes and how to upgrade. For a complete list of changes including minor and patch releases, please refer to the [changelog](CHANGELOG.md).
 
-## v2
+## 2.0.0
 
 Dropped node 9 and upgraded to [`readable-stream@3`](https://github.com/nodejs/readable-stream#version-3xx).
 
-## v1
+## 1.0.0
 
 Dropped support for node 0.10, 0.12, 2, 3, 4 and 5.
 

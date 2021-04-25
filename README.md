@@ -9,8 +9,7 @@
 [![npm](https://img.shields.io/npm/dm/level-ws.svg?label=dl)](https://www.npmjs.com/package/level-ws)
 [![Coverage Status](https://codecov.io/gh/Level/level-ws/branch/master/graph/badge.svg)](https://codecov.io/gh/Level/level-ws)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Backers on Open Collective](https://opencollective.com/level/backers/badge.svg?color=orange)](#backers)
-[![Sponsors on Open Collective](https://opencollective.com/level/sponsors/badge.svg?color=orange)](#sponsors)
+[![Funding](https://opencollective.com/level/tiers/badge.svg)](#donate)
 
 `level-ws` provides the most basic general-case WriteStream for `levelup`. It was extracted from the core `levelup` at version 0.18.0.
 
@@ -119,18 +118,18 @@ See the [Contribution Guide](https://github.com/Level/community/blob/master/CONT
 
 ## Donate
 
-To sustain [`Level`](https://github.com/Level) and its activities, become a backer or sponsor on [Open Collective](https://opencollective.com/level). Your logo or avatar will be displayed on our 28+ [GitHub repositories](https://github.com/Level) and [npm](https://www.npmjs.com/) packages. 💖
+Support us with a monthly donation on [Open Collective](https://opencollective.com/level) and help us continue our work. Your logo or avatar will be displayed on our 28+ [GitHub repositories](https://github.com/Level) and [npm](https://www.npmjs.com/) packages. 💖
 
-### Backers
+**Active financial contributors**
 
-[![Open Collective backers](https://opencollective.com/level/backers.svg?width=890)](https://opencollective.com/level)
+[![Open Collective backers](https://opencollective.com/level/tiers/backer.svg?button=false)](https://opencollective.com/level) [![Open Collective sponsors](https://opencollective.com/level/tiers/sponsor.svg?button=false)](https://opencollective.com/level)
 
-### Sponsors
+**Past financial contributors**
 
-[![Open Collective sponsors](https://opencollective.com/level/sponsors.svg?width=890)](https://opencollective.com/level)
+[![Open Collective sponsors](https://opencollective.com/level/sponsors.svg?button=false&avatarHeight=36)](https://opencollective.com/level) [![Open Collective backers](https://opencollective.com/level/backers.svg?button=false&avatarHeight=36)](https://opencollective.com/level)
 
 ## License
 
-[MIT](LICENSE.md) © 2012-present [Contributors](CONTRIBUTORS.md).
+[MIT](LICENSE)
 
 [level-badge]: https://leveljs.org/img/badge.svg
