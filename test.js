@@ -1,12 +1,14 @@
-var tape = require('tape')
-var level = require('level')
-var WriteStream = require('.')
-var concat = require('level-concat-iterator')
-var secretListener = require('secret-event-listener')
-var tempy = require('tempy')
+'use strict'
+
+const tape = require('tape')
+const level = require('level')
+const WriteStream = require('.')
+const concat = require('level-concat-iterator')
+const secretListener = require('secret-event-listener')
+const tempy = require('tempy')
 
 function monitor (stream) {
-  var order = []
+  const order = []
 
   ;['error', 'finish', 'close'].forEach(function (event) {
     secretListener(stream, event, function () {
@@ -18,8 +20,8 @@ function monitor (stream) {
 }
 
 function monkeyBatch (db, fn) {
-  var down = db.db
-  var original = down._batch.bind(down)
+  const down = db.db
+  const original = down._batch.bind(down)
   down._batch = fn.bind(down, original)
 }
 
@@ -41,10 +43,10 @@ function test (label, options, fn) {
   options.errorIfExists = true
 
   tape(label, function (t) {
-    var ctx = {}
+    const ctx = {}
 
-    var sourceData = ctx.sourceData = []
-    for (var i = 0; i < 2; i++) {
+    const sourceData = ctx.sourceData = []
+    for (let i = 0; i < 2; i++) {
       ctx.sourceData.push({ key: String(i), value: 'value' })
     }
 
@@ -72,7 +74,7 @@ function test (label, options, fn) {
 // TODO: test various encodings
 
 test('test simple WriteStream', function (t, ctx, done) {
-  var ws = WriteStream(ctx.db)
+  const ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -84,9 +86,9 @@ test('test simple WriteStream', function (t, ctx, done) {
 })
 
 test('test WriteStream with async writes', function (t, ctx, done) {
-  var ws = WriteStream(ctx.db)
-  var sourceData = ctx.sourceData
-  var i = -1
+  const ws = WriteStream(ctx.db)
+  const sourceData = ctx.sourceData
+  let i = -1
 
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
@@ -96,7 +98,7 @@ test('test WriteStream with async writes', function (t, ctx, done) {
   function write () {
     if (++i >= sourceData.length) return ws.end()
 
-    var d = sourceData[i]
+    const d = sourceData[i]
     // some should batch() and some should put()
     if (d.key % 3) {
       setTimeout(function () {
@@ -116,8 +118,8 @@ test('race condition between batch callback and close event', function (t, ctx, 
   // Delaying the batch should not be a problem
   slowdown(ctx.db)
 
-  var ws = WriteStream(ctx.db)
-  var i = 0
+  const ws = WriteStream(ctx.db)
+  let i = 0
 
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
@@ -136,8 +138,8 @@ test('race condition between batch callback and close event', function (t, ctx, 
 test('race condition between two flushes', function (t, ctx, done) {
   slowdown(ctx.db)
 
-  var ws = WriteStream(ctx.db)
-  var order = monitor(ws)
+  const ws = WriteStream(ctx.db)
+  const order = monitor(ws)
 
   ws.on('close', function () {
     t.same(order, ['batch', 'batch', 'close'])
@@ -161,8 +163,8 @@ test('race condition between two flushes', function (t, ctx, done) {
 })
 
 test('test end accepts data', function (t, ctx, done) {
-  var ws = WriteStream(ctx.db)
-  var i = 0
+  const ws = WriteStream(ctx.db)
+  let i = 0
 
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
@@ -179,9 +181,9 @@ test('test end accepts data', function (t, ctx, done) {
 })
 
 test('test destroy()', function (t, ctx, done) {
-  var ws = WriteStream(ctx.db)
+  const ws = WriteStream(ctx.db)
 
-  var verify = function () {
+  const verify = function () {
     concat(ctx.db.iterator(), function (err, result) {
       t.error(err, 'no error')
       t.same(result, [], 'results should be empty')
@@ -200,8 +202,8 @@ test('test destroy()', function (t, ctx, done) {
 })
 
 test('test destroy(err)', function (t, ctx, done) {
-  var ws = WriteStream(ctx.db)
-  var order = monitor(ws)
+  const ws = WriteStream(ctx.db)
+  const order = monitor(ws)
 
   ws.on('error', function (err) {
     t.is(err.message, 'user error', 'got error')
@@ -225,7 +227,7 @@ test('test destroy(err)', function (t, ctx, done) {
 })
 
 test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
-  var data = [
+  const data = [
     { key: 'aa', value: { a: 'complex', obj: 100 } },
     { key: 'ab', value: { b: 'foo', bar: [1, 2, 3] } },
     { key: 'ac', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
@@ -237,7 +239,7 @@ test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, funct
     { key: 'cc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } }
   ]
 
-  var ws = WriteStream(ctx.db)
+  const ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -249,7 +251,7 @@ test('test json encoding', { keyEncoding: 'utf8', valueEncoding: 'json' }, funct
 })
 
 test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
-  var data = [
+  const data = [
     { key: 'aa', value: { a: 'complex', obj: 100 } },
     { key: 'ab', value: { b: 'foo', bar: [1, 2, 3] } },
     { key: 'ac', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
@@ -262,7 +264,7 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
   ]
 
   function del () {
-    var delStream = WriteStream(ctx.db)
+    const delStream = WriteStream(ctx.db)
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -285,7 +287,7 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
     })
   }
 
-  var ws = WriteStream(ctx.db)
+  const ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -299,7 +301,7 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
 })
 
 test('test del capabilities as constructor option', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
-  var data = [
+  const data = [
     { key: 'aa', value: { a: 'complex', obj: 100 } },
     { key: 'ab', value: { b: 'foo', bar: [1, 2, 3] } },
     { key: 'ac', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
@@ -312,7 +314,7 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
   ]
 
   function del () {
-    var delStream = WriteStream(ctx.db, { type: 'del' })
+    const delStream = WriteStream(ctx.db, { type: 'del' })
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -334,7 +336,7 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
     })
   }
 
-  var ws = WriteStream(ctx.db)
+  const ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -348,7 +350,7 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
 })
 
 test('test type at key/value level must take precedence on the constructor', { keyEncoding: 'utf8', valueEncoding: 'json' }, function (t, ctx, done) {
-  var data = [
+  const data = [
     { key: 'aa', value: { a: 'complex', obj: 100 } },
     { key: 'ab', value: { b: 'foo', bar: [1, 2, 3] } },
     { key: 'ac', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } },
@@ -359,12 +361,12 @@ test('test type at key/value level must take precedence on the constructor', { k
     { key: 'cb', value: { b: 'foo', bar: [1, 2, 3] } },
     { key: 'cc', value: { c: 'w00t', d: { e: [0, 10, 20, 30], f: 1, g: 'wow' } } }
   ]
-  var exception = data[0]
+  const exception = data[0]
 
   exception.type = 'put'
 
   function del () {
-    var delStream = WriteStream(ctx.db, { type: 'del' })
+    const delStream = WriteStream(ctx.db, { type: 'del' })
     delStream.on('error', function (err) {
       t.notOk(err, 'no error')
     })
@@ -381,13 +383,13 @@ test('test type at key/value level must take precedence on the constructor', { k
   function verify () {
     concat(ctx.db.iterator(), function (err, result) {
       t.error(err, 'no error')
-      var expected = [{ key: data[0].key, value: data[0].value }]
+      const expected = [{ key: data[0].key, value: data[0].value }]
       t.same(result, expected, 'only one element')
       done()
     })
   }
 
-  var ws = WriteStream(ctx.db)
+  const ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.notOk(err, 'no error')
   })
@@ -401,8 +403,8 @@ test('test type at key/value level must take precedence on the constructor', { k
 })
 
 test('test that missing type errors', function (t, ctx, done) {
-  var data = { key: 314, type: 'foo' }
-  var errored = false
+  const data = { key: 314, type: 'foo' }
+  let errored = false
 
   function verify () {
     ctx.db.get(data.key, function (err, value) {
@@ -414,7 +416,7 @@ test('test that missing type errors', function (t, ctx, done) {
     })
   }
 
-  var ws = WriteStream(ctx.db)
+  const ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
     t.equal(err.message, '`type` must be \'put\' or \'del\'', 'should error')
     errored = true
@@ -427,8 +429,8 @@ test('test that missing type errors', function (t, ctx, done) {
 })
 
 test('test limbo batch error', function (t, ctx, done) {
-  var ws = WriteStream(ctx.db)
-  var order = monitor(ws)
+  const ws = WriteStream(ctx.db)
+  const order = monitor(ws)
 
   monkeyBatch(ctx.db, function (original, ops, options, cb) {
     process.nextTick(cb, new Error('batch error'))
@@ -449,8 +451,8 @@ test('test limbo batch error', function (t, ctx, done) {
 })
 
 test('test batch error when buffer is full', function (t, ctx, done) {
-  var ws = WriteStream(ctx.db, { maxBufferLength: 1 })
-  var order = monitor(ws)
+  const ws = WriteStream(ctx.db, { maxBufferLength: 1 })
+  const order = monitor(ws)
 
   monkeyBatch(ctx.db, function (original, ops, options, cb) {
     process.nextTick(cb, new Error('batch error'))
@@ -472,8 +474,8 @@ test('test batch error when buffer is full', function (t, ctx, done) {
 })
 
 test('test destroy while waiting to drain', function (t, ctx, done) {
-  var ws = WriteStream(ctx.db, { maxBufferLength: 1 })
-  var order = monitor(ws)
+  const ws = WriteStream(ctx.db, { maxBufferLength: 1 })
+  const order = monitor(ws)
 
   ws.on('error', function (err) {
     t.is(err.message, 'user error', 'got error')
@@ -501,16 +503,16 @@ test('test destroy while waiting to drain', function (t, ctx, done) {
 
 function testMaxBuffer (max, randomize) {
   return function (t, ctx, done) {
-    var ws = WriteStream(ctx.db, { maxBufferLength: max })
-    var sourceData = []
-    var batches = []
+    const ws = WriteStream(ctx.db, { maxBufferLength: max })
+    const sourceData = []
+    const batches = []
 
-    for (var i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i++) {
       sourceData.push({ key: i < 10 ? '0' + i : String(i), value: 'value' })
     }
 
-    var expectedSize = max || sourceData.length
-    var remaining = sourceData.slice()
+    const expectedSize = max || sourceData.length
+    const remaining = sourceData.slice()
 
     ws.on('close', function () {
       t.ok(batches.every(function (size, index) {
@@ -528,7 +530,7 @@ function testMaxBuffer (max, randomize) {
     loop()
 
     function loop () {
-      var toWrite = randomize
+      const toWrite = randomize
         ? Math.floor(Math.random() * remaining.length + 1)
         : remaining.length
 

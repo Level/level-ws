@@ -1,8 +1,10 @@
-var Writable = require('readable-stream').Writable
-var inherits = require('inherits')
-var extend = require('xtend')
+'use strict'
 
-var defaultOptions = { type: 'put' }
+const Writable = require('readable-stream').Writable
+const inherits = require('inherits')
+const extend = require('xtend')
+
+const defaultOptions = { type: 'put' }
 
 function WriteStream (db, options) {
   if (!(this instanceof WriteStream)) {
@@ -22,64 +24,56 @@ function WriteStream (db, options) {
   this._flushing = false
   this._maxBufferLength = options.maxBufferLength || Infinity
 
-  var self = this
-
-  this.on('finish', function () {
-    self.emit('close')
+  this.on('finish', () => {
+    this.emit('close')
   })
 }
 
 inherits(WriteStream, Writable)
 
 WriteStream.prototype._write = function (data, enc, next) {
-  var self = this
-  if (self.destroyed) return
+  if (this.destroyed) return
 
-  if (!self._flushing) {
-    self._flushing = true
-    process.nextTick(function () { self._flush() })
+  if (!this._flushing) {
+    this._flushing = true
+    process.nextTick(() => { this._flush() })
   }
 
-  if (self._buffer.length >= self._maxBufferLength) {
-    self.once('_flush', function (err) {
-      if (err) return self.destroy(err)
-      self._write(data, enc, next)
+  if (this._buffer.length >= this._maxBufferLength) {
+    this.once('_flush', (err) => {
+      if (err) return this.destroy(err)
+      this._write(data, enc, next)
     })
   } else {
-    self._buffer.push(extend({ type: self._options.type }, data))
+    this._buffer.push(extend({ type: this._options.type }, data))
     next()
   }
 }
 
 WriteStream.prototype._flush = function () {
-  var self = this
-  var buffer = self._buffer
+  const buffer = this._buffer
 
-  if (self.destroyed) return
+  if (this.destroyed) return
 
-  self._buffer = []
-  self._db.batch(buffer, cb)
+  this._buffer = []
+  this._db.batch(buffer, (err) => {
+    this._flushing = false
 
-  function cb (err) {
-    self._flushing = false
-
-    if (!self.emit('_flush', err) && err) {
+    if (!this.emit('_flush', err) && err) {
       // There was no _flush listener.
-      self.destroy(err)
+      this.destroy(err)
     }
-  }
+  })
 }
 
 WriteStream.prototype._final = function (cb) {
-  var self = this
-
   if (this._flushing) {
     // Wait for scheduled or in-progress _flush()
-    this.once('_flush', function (err) {
+    this.once('_flush', (err) => {
       if (err) return cb(err)
 
       // There could be additional buffered writes
-      self._final(cb)
+      this._final(cb)
     })
   } else if (this._buffer && this._buffer.length) {
     this.once('_flush', cb)
