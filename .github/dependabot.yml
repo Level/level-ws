@@ -6,5 +6,3 @@ updates:
       interval: monthly
     ignore:
       - dependency-name: dependency-check
-      - dependency-name: nyc
-      - dependency-name: tempy
