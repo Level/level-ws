@@ -29,7 +29,7 @@
     "secret-event-listener": "^1.0.0",
     "standard": "^16.0.3",
     "tape": "^5.0.1",
-    "tempy": "^1.0.1"
+    "tempy": "^2.0.0"
   },
   "repository": {
     "type": "git",
