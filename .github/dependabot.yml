@@ -5,7 +5,9 @@ updates:
     schedule:
       interval: monthly
     ignore:
-      - dependency-name: dependency-check
+      - dependency-name: standard
+      - dependency-name: hallmark
+      - dependency-name: tempy
   - package-ecosystem: github-actions
     directory: /
     schedule:
