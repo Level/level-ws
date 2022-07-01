@@ -1,7 +1,7 @@
 {
   "name": "level-ws",
   "version": "3.0.0",
-  "description": "A basic WriteStream implementation for LevelUP",
+  "description": "A basic writable stream for abstract-level databases",
   "license": "MIT",
   "main": "level-ws.js",
   "scripts": {

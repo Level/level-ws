@@ -1,112 +1,52 @@
 # level-ws
 
-> A basic WriteStream implementation for [levelup](https://github.com/Level/levelup)
+**A basic writable stream for [`abstract-level`](https://github.com/Level/abstract-level) databases, using Node.js core streams.** This is not a high-performance stream. If benchmarking shows that your particular usage does not fit then try one of the alternative writable streams that are optimized for different use cases.
+
+> :pushpin: To instead write data using Web Streams, see [`level-web-stream`](https://github.com/Level/web-stream).
 
 [![level badge][level-badge]](https://github.com/Level/awesome)
-[![npm](https://img.shields.io/npm/v/level-ws.svg?label=&logo=npm)](https://www.npmjs.com/package/level-ws)
+[![npm](https://img.shields.io/npm/v/level-ws.svg)](https://www.npmjs.com/package/level-ws)
 [![Node version](https://img.shields.io/node/v/level-ws.svg)](https://www.npmjs.com/package/level-ws)
-[![Test](https://github.com/Level/level-ws/actions/workflows/test.yml/badge.svg)](https://github.com/Level/level-ws/actions/workflows/test.yml)
-[![npm](https://img.shields.io/npm/dm/level-ws.svg?label=dl)](https://www.npmjs.com/package/level-ws)
-[![Coverage Status](https://codecov.io/gh/Level/level-ws/branch/master/graph/badge.svg)](https://codecov.io/gh/Level/level-ws)
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Funding](https://opencollective.com/level/tiers/badge.svg)](#donate)
-
-`level-ws` provides the most basic general-case WriteStream for `levelup`. It was extracted from the core `levelup` at version 0.18.0.
-
-`level-ws` is not a high-performance WriteStream. If your benchmarking shows that your particular usage pattern and data types do not perform well with this WriteStream then you should try one of the alternative WriteStreams available for `levelup` that are optimised for different use-cases.
-
-**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md).
+[![Test](https://img.shields.io/github/workflow/status/Level/level-ws/Test?label=test)](https://github.com/Level/level-ws/actions/workflows/test.yml)
+[![Coverage](https://img.shields.io/codecov/c/github/Level/level-ws?label=\&logo=codecov\&logoColor=fff)](https://codecov.io/gh/Level/level-ws)
+[![Standard](https://img.shields.io/badge/standard-informational?logo=javascript\&logoColor=fff)](https://standardjs.com)
+[![Common Changelog](https://common-changelog.org/badge.svg)](https://common-changelog.org)
+[![Donate](https://img.shields.io/badge/donate-orange?logo=open-collective\&logoColor=fff)](https://opencollective.com/level)
 
 ## Usage
 
-```js
-var level = require('level')
-var WriteStream = require('level-ws')
+_If you are upgrading: please see [`UPGRADING.md`](UPGRADING.md)._
 
-var db = level('/path/to/db')
-var ws = WriteStream(db) // ...
+```js
+const { Level } = require('level')
+const WriteStream = require('level-ws')
+
+const db = new Level('./db', { valueEncoding: 'json' })
+const ws = WriteStream(db)
+
+ws.on('close', function () {
+  console.log('Done!')
+})
+
+ws.write({ key: 'alice', value: 42 })
+ws.write({ key: 'bob', value: 7 })
+
+// To delete entries, specify an explicit type
+ws.write({ type: 'del', key: 'tomas' })
+ws.write({ type: 'put', key: 'sara', value: 16 })
+
+ws.end()
 ```
 
 ## API
 
 ### `ws = WriteStream(db[, options])`
 
-Creates a [Writable](https://nodejs.org/dist/latest-v8.x/docs/api/stream.html#stream_class_stream_writable) stream which operates in **objectMode**, accepting objects with `'key'` and `'value'` pairs on its `write()` method.
+Create a [writable stream](https://nodejs.org/dist/latest-v8.x/docs/api/stream.html#stream_class_stream_writable) that operates in object mode, accepting batch operations to be committed with `db.batch()` on each tick of the Node.js event loop. The optional `options` argument may contain:
 
-The optional `options` argument may contain:
-
-- `type` _(string, default: `'put'`)_: Default batch operation for missing `type` property during `ws.write()`.
-
-The WriteStream will buffer writes and submit them as a `batch()` operations where writes occur _within the same tick_.
-
-```js
-var ws = WriteStream(db)
-
-ws.on('error', function (err) {
-  console.log('Oh my!', err)
-})
-ws.on('close', function () {
-  console.log('Stream closed')
-})
-
-ws.write({ key: 'name', value: 'Yuri Irsenovich Kim' })
-ws.write({ key: 'dob', value: '16 February 1941' })
-ws.write({ key: 'spouse', value: 'Kim Young-sook' })
-ws.write({ key: 'occupation', value: 'Clown' })
-ws.end()
-```
-
-The standard `write()`, `end()` and `destroy()` methods are implemented on the WriteStream. `'drain'`, `'error'`, `'close'` and `'pipe'` events are emitted.
-
-You can specify encodings for individual entries by setting `.keyEncoding` and/or `.valueEncoding`:
-
-```js
-writeStream.write({
-  key: new Buffer([1, 2, 3]),
-  value: { some: 'json' },
-  keyEncoding: 'binary',
-  valueEncoding : 'json'
-})
-```
-
-If individual `write()` operations are performed with a `'type'` property of `'del'`, they will be passed on as `'del'` operations to the batch.
-
-```js
-var ws = WriteStream(db)
-
-ws.on('error', function (err) {
-  console.log('Oh my!', err)
-})
-ws.on('close', function () {
-  console.log('Stream closed')
-})
-
-ws.write({ type: 'del', key: 'name' })
-ws.write({ type: 'del', key: 'dob' })
-ws.write({ type: 'put', key: 'spouse' })
-ws.write({ type: 'del', key: 'occupation' })
-ws.end()
-```
-
-If the _WriteStream_ is created with a `'type'` option of `'del'`, all `write()` operations will be interpreted as `'del'`, unless explicitly specified as `'put'`.
-
-```js
-var ws = WriteStream(db, { type: 'del' })
-
-ws.on('error', function (err) {
-  console.log('Oh my!', err)
-})
-ws.on('close', function () {
-  console.log('Stream closed')
-})
-
-ws.write({ key: 'name' })
-ws.write({ key: 'dob' })
-// but it can be overridden
-ws.write({ type: 'put', key: 'spouse', value: 'Ri Sol-ju' })
-ws.write({ key: 'occupation' })
-ws.end()
-```
+- `type` (string, default: `'put'`): default batch operation type if not set on indididual operations.
+- `maxBufferLength` (number, default `Infinity`): limit the size of batches. When exceeded, the stream will stop processing writes until the current batch has been committed.
+- `highWaterMark` (number, default `16`): buffer level when `stream.write()` starts returning false.
 
 ## Contributing
 
@@ -115,18 +55,6 @@ ws.end()
 > Individuals making significant and valuable contributions are given commit-access to the project to contribute as they see fit. This project is more like an open wiki than a standard guarded open source project.
 
 See the [Contribution Guide](https://github.com/Level/community/blob/master/CONTRIBUTING.md) for more details.
-
-## Donate
-
-Support us with a monthly donation on [Open Collective](https://opencollective.com/level) and help us continue our work. Your logo or avatar will be displayed on our 28+ [GitHub repositories](https://github.com/Level) and [npm](https://www.npmjs.com/) packages. 💖
-
-**Active financial contributors**
-
-[![Open Collective backers](https://opencollective.com/level/tiers/backer.svg?button=false)](https://opencollective.com/level) [![Open Collective sponsors](https://opencollective.com/level/tiers/sponsor.svg?button=false)](https://opencollective.com/level)
-
-**Past financial contributors**
-
-[![Open Collective sponsors](https://opencollective.com/level/sponsors.svg?button=false&avatarHeight=36)](https://opencollective.com/level) [![Open Collective backers](https://opencollective.com/level/backers.svg?button=false&avatarHeight=36)](https://opencollective.com/level)
 
 ## License
 
