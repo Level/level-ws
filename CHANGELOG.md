@@ -1,8 +1,22 @@
 # Changelog
 
+## [4.0.0] - 2022-07-01
+
+_If you are upgrading: please see [`UPGRADING.md`](UPGRADING.md)._
+
+### Changed
+
+- **Breaking:** bump [`readable-stream`](https://github.com/nodejs/readable-stream) from 3 to 4 ([`082b8d6`](https://github.com/Level/level-ws/commit/082b8d6)) (Vincent Weevers)
+- **Breaking:** use classes, requiring `new` ([`dafafb2`](https://github.com/Level/level-ws/commit/dafafb2)) (Vincent Weevers)
+- **Breaking:** drop Node.js 10 ([`817c30c`](https://github.com/Level/level-ws/commit/817c30c)) (Vincent Weevers)
+
+### Fixed
+
+- Cleanup README and add missing docs for options ([`94a2a8e`](https://github.com/Level/level-ws/commit/94a2a8e)) (Vincent Weevers).
+
 ## [3.0.0] - 2021-04-25
 
-_**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md)._
+_If you are upgrading: please see [`UPGRADING.md`](UPGRADING.md)._
 
 ### Changed
 
@@ -101,6 +115,8 @@ _**If you are upgrading:** please see [`UPGRADING.md`](UPGRADING.md)._
 ## [0.0.0] - 2013-10-12
 
 :seedling: Initial release.
+
+[4.0.0]: https://github.com/Level/level-ws/releases/tag/v4.0.0
 
 [3.0.0]: https://github.com/Level/level-ws/compare/v2.0.0...v3.0.0
 

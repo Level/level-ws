@@ -2,6 +2,22 @@
 
 This document describes breaking changes and how to upgrade. For a complete list of changes including minor and patch releases, please refer to the [changelog](CHANGELOG.md).
 
+## 4.0.0
+
+Drops support of Node.js 10, upgrades to `readable-stream@4` ([`082b8d6`](https://github.com/Level/level-ws/commit/082b8d6)) and uses classes which means `new` is now required. If you previously did:
+
+```js
+const WriteStream = require('level-ws')
+const ws = WriteStream(db)
+```
+
+You must now do:
+
+```js
+const WriteStream = require('level-ws')
+const ws = new WriteStream(db)
+```
+
 ## 3.0.0
 
 This release drops support of legacy runtime environments ([Level/community#98](https://github.com/Level/community/issues/98)):
