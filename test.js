@@ -1,9 +1,8 @@
 'use strict'
 
 const tape = require('tape')
-const level = require('level')
+const { Level } = require('level')
 const WriteStream = require('.')
-const concat = require('level-concat-iterator')
 const secretListener = require('secret-event-listener')
 const tempy = require('tempy')
 
@@ -20,9 +19,8 @@ function monitor (stream) {
 }
 
 function monkeyBatch (db, fn) {
-  const down = db.db
-  const original = down._batch.bind(down)
-  down._batch = fn.bind(down, original)
+  const original = db._batch.bind(db)
+  db._batch = fn.bind(db, original)
 }
 
 function slowdown (db) {
@@ -31,6 +29,10 @@ function slowdown (db) {
       original(ops, options, cb)
     }, 500)
   })
+}
+
+function entryKv (entry) {
+  return { key: entry[0], value: entry[1] }
 }
 
 function test (label, options, fn) {
@@ -51,19 +53,20 @@ function test (label, options, fn) {
     }
 
     ctx.verify = function (ws, done, data) {
-      concat(ctx.db.iterator(), function (err, result) {
+      ctx.db.iterator().all(function (err, result) {
         t.error(err, 'no error')
-        t.same(result, data || sourceData, 'correct data')
+        t.same(result.map(entryKv), data || sourceData, 'correct data')
         done()
       })
     }
 
-    level(tempy.directory(), options, function (err, db) {
-      t.notOk(err, 'no error')
-      ctx.db = db
+    ctx.db = new Level(tempy.directory(), options)
+
+    ctx.db.open(function (err) {
+      t.ifError(err, 'no open() error')
       fn(t, ctx, function () {
         ctx.db.close(function (err) {
-          t.notOk(err, 'no error')
+          t.ifError(err, 'no close() error')
           t.end()
         })
       })
@@ -184,9 +187,9 @@ test('test destroy()', function (t, ctx, done) {
   const ws = WriteStream(ctx.db)
 
   const verify = function () {
-    concat(ctx.db.iterator(), function (err, result) {
+    ctx.db.iterator().all(function (err, result) {
       t.error(err, 'no error')
-      t.same(result, [], 'results should be empty')
+      t.same(result.map(entryKv), [], 'results should be empty')
       done()
     })
   }
@@ -212,9 +215,9 @@ test('test destroy(err)', function (t, ctx, done) {
   ws.on('close', function () {
     t.same(order, ['error', 'close'])
 
-    concat(ctx.db.iterator(), function (err, result) {
+    ctx.db.iterator().all(function (err, result) {
       t.error(err, 'no error')
-      t.same(result, [], 'results should be empty')
+      t.same(result.map(entryKv), [], 'results should be empty')
       done()
     })
   })
@@ -280,9 +283,9 @@ test('test del capabilities for each key/value', { keyEncoding: 'utf8', valueEnc
   }
 
   function verify () {
-    concat(ctx.db.iterator(), function (err, result) {
+    ctx.db.iterator().all(function (err, result) {
       t.error(err, 'no error')
-      t.same(result, [], 'results should be empty')
+      t.same(result.map(entryKv), [], 'results should be empty')
       done()
     })
   }
@@ -329,9 +332,9 @@ test('test del capabilities as constructor option', { keyEncoding: 'utf8', value
   }
 
   function verify () {
-    concat(ctx.db.iterator(), function (err, result) {
+    ctx.db.iterator().all(function (err, result) {
       t.error(err, 'no error')
-      t.same(result, [], 'results should be empty')
+      t.same(result.map(entryKv), [], 'results should be empty')
       done()
     })
   }
@@ -381,10 +384,10 @@ test('test type at key/value level must take precedence on the constructor', { k
   }
 
   function verify () {
-    concat(ctx.db.iterator(), function (err, result) {
+    ctx.db.iterator().all(function (err, result) {
       t.error(err, 'no error')
       const expected = [{ key: data[0].key, value: data[0].value }]
-      t.same(result, expected, 'only one element')
+      t.same(result.map(entryKv), expected, 'only one element')
       done()
     })
   }
@@ -418,7 +421,7 @@ test('test that missing type errors', function (t, ctx, done) {
 
   const ws = WriteStream(ctx.db)
   ws.on('error', function (err) {
-    t.equal(err.message, '`type` must be \'put\' or \'del\'', 'should error')
+    t.equal(err.message, 'A batch operation must have a type property that is \'put\' or \'del\'', 'should error')
     errored = true
   })
   ws.on('close', function () {
