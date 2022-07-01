@@ -22,7 +22,7 @@ const { Level } = require('level')
 const WriteStream = require('level-ws')
 
 const db = new Level('./db', { valueEncoding: 'json' })
-const ws = WriteStream(db)
+const ws = new WriteStream(db)
 
 ws.on('close', function () {
   console.log('Done!')
@@ -40,7 +40,7 @@ ws.end()
 
 ## API
 
-### `ws = WriteStream(db[, options])`
+### `ws = new WriteStream(db[, options])`
 
 Create a [writable stream](https://nodejs.org/dist/latest-v8.x/docs/api/stream.html#stream_class_stream_writable) that operates in object mode, accepting batch operations to be committed with `db.batch()` on each tick of the Node.js event loop. The optional `options` argument may contain:
 

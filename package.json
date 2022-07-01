@@ -14,7 +14,6 @@
     "UPGRADING.md"
   ],
   "dependencies": {
-    "inherits": "^2.0.3",
     "readable-stream": "^3.1.0"
   },
   "devDependencies": {
