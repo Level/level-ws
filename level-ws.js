@@ -8,7 +8,9 @@ class WriteStream extends Writable {
 
     super({
       objectMode: true,
-      highWaterMark: options.highWaterMark || 16
+      highWaterMark: options.highWaterMark || 16,
+      autoDestroy: true,
+      emitClose: true
     })
 
     this._options = options
@@ -17,10 +19,6 @@ class WriteStream extends Writable {
     this._flushing = false
     this._maxBufferLength = options.maxBufferLength || Infinity
     this._flush = this._flush.bind(this)
-
-    this.on('finish', () => {
-      this.emit('close')
-    })
   }
 
   _write (data, enc, next) {

@@ -42,7 +42,7 @@ ws.end()
 
 ### `ws = new WriteStream(db[, options])`
 
-Create a [writable stream](https://nodejs.org/dist/latest-v8.x/docs/api/stream.html#stream_class_stream_writable) that operates in object mode, accepting batch operations to be committed with `db.batch()` on each tick of the Node.js event loop. The optional `options` argument may contain:
+Create a [writable stream](https://nodejs.org/dist/latest-v18.x/docs/api/stream.html#stream_class_stream_writable) that operates in object mode, accepting batch operations to be committed with `db.batch()` on each tick of the Node.js event loop. The optional `options` argument may contain:
 
 - `type` (string, default: `'put'`): default batch operation type if not set on indididual operations.
 - `maxBufferLength` (number, default `Infinity`): limit the size of batches. When exceeded, the stream will stop processing writes until the current batch has been committed.

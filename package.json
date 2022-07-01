@@ -14,7 +14,7 @@
     "UPGRADING.md"
   ],
   "dependencies": {
-    "readable-stream": "^3.1.0"
+    "readable-stream": "^4.0.0"
   },
   "devDependencies": {
     "hallmark": "^4.1.0",

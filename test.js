@@ -145,7 +145,7 @@ test('race condition between two flushes', function (t, ctx, done) {
   const order = monitor(ws)
 
   ws.on('close', function () {
-    t.same(order, ['batch', 'batch', 'close'])
+    t.same(order, ['batch', 'batch', 'finish', 'close'])
 
     ctx.verify(ws, done, [
       { key: 'a', value: 'a' },
